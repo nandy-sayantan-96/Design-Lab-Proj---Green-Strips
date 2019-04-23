@@ -13,7 +13,19 @@ mysql = MySQL(app)
 
 @app.route('/')
 def index():
-    return render_template('home.html')
+    loggedIn, name = getLoginDetails()
+    return render_template('home.html', user_data = name)
+
+#Fetch user details if logged in
+def getLoginDetails():
+    if 'email' not in session:
+        loggedIn = False
+        name = 'GUEST'
+    else:
+        loggedIn = True
+        name = session['name']
+    return (loggedIn, name)
+
 
 @app.route('/signup', methods=['GET', 'POST'])
 def user_signup():
