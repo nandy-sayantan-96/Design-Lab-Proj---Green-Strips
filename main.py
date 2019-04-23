@@ -76,8 +76,9 @@ def login_user():
         if password == user['password'] :
             session['email'] = user['email']
             session['name'] = user['f_name']
+            session['user_id'] = user['id']
             #return "LOGIN SUCCESS"
-            return redirect(url_for('index'))
+            return redirect(url_for('products'))
         else:
             return "Passwords not match"
 
@@ -89,6 +90,50 @@ def logout_user():
     session.clear()
     return redirect(url_for('index'))
 
+@app.route('/products')
+def products():
+    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cur.execute(" SELECT * FROM products ")
+    prods = cur.fetchall()
+    cur.close()
+    return render_template('products.html', prods = prods)
+
+@app.route('/advertise')
+def advertise():
+    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cur.execute(" SELECT * FROM products ")
+    prods = cur.fetchall()
+    cur.close()
+    return render_template('advertisement.html', prods = prods)
+
+@app.route('/addToCart/<int:prod_id>', methods=['POST'])
+def addToCart(prod_id, purchase_type = 0):
+    loggedIn = getLoginDetails()[0]
+    if loggedIn == False:
+        return redirect(url_for('login_user'))
+    user_id = session['user_id']
+    qty = request.form['qty']
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO cart (user_id, product_id, qty, purchase_type) VALUES (%s, %s, %s, %s)",
+                (user_id, prod_id, qty, purchase_type,))
+
+        mysql.connection.commit()
+        msg = "Added to Cart Successfully"
+        print(msg)
+    except:
+        mysql.connection.rollback()
+        msg = "Error occured"
+        print(msg)
+        return msg
+    cur.close()
+    return redirect(url_for('products'))
+
+@app.route('/addToCartAdvertise/<int:prod_id>', methods=['POST'])
+def addToCartAdvertise(prod_id):
+    addToCart(prod_id, 1)
+    return redirect(url_for('advertise'))
+
 if __name__ == '__main__':
     app.secret_key = "dsadasdsadqw2346436%nw9e"
-    app.run()
+    app.run(debug=True)

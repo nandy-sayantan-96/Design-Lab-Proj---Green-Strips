@@ -1,0 +1,22 @@
+<html>
+    <body>
+        <title>Products Page</title>
+    </body>
+    <head>
+        {% for prod in prods%}
+        <form action="/addToCart/{{ prod['p_id'] }}" method="POST">
+            <div>
+                <div> {{ prod["p_id"] }}</div>
+                <div> {{ prod["p_name"] }}</div>
+                <div> {{ prod["description"] }}</div>
+                <img src="../static/img/prod/{{ prod['image'] }}" >
+                <div> {{ prod["price_ad"] }}</div>
+                <div> {{ prod["price_buy"] }}</div>
+                <input type="number" name="qty">
+                <p><input type="submit" value="Register"></p>
+                <hr>
+            </div>
+        </form>
+        {% endfor %}
+    </head>
+</html>
