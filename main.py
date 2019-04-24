@@ -143,6 +143,53 @@ def cart():
     cur.close()
     return render_template('cart.html', cart_prods = cart_prods)
 
+@app.route('/cart_item/remove/<int:cart_item_id>', methods = ['POST'])
+def removerCartItem(cart_item_id):
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("DELETE FROM cart WHERE cart_item_id = %s", (cart_item_id,))
+        mysql.connection.commit()
+        msg = "Removed from the Cart Successfully"
+        print(msg)
+    except:
+        mysql.connection.rollback()
+        msg = "Error occured"
+        print(msg)
+        return msg
+    cur.close()
+    return redirect(url_for('cart'))
+
+@app.route('/checkout', methods = ['POST'])
+def checkout():
+    cur = mysql.connection.cursor()
+    cur.execute(" SELECT * FROM order_details ")
+    orders = cur.fetchall()
+    if len(orders) == 0 :
+        order_id = 1
+    else:
+        cur.execute(" SELECT o_id FROM order_details ORDER BY o_id DESC LIMIT 1")
+        order_id = cur.fetchone()[0] + 1
+    user_id = session['user_id']
+
+    cur.execute(" SELECT user_id, product_id, SUM(qty), purchase_type FROM cart WHERE user_id = %s GROUP BY product_id, purchase_type ", (user_id,))
+    cart_details = cur.fetchall()
+    print(cart_details)
+    for items in cart_details :
+        print(items[1], "   ", items[2], items[3])
+        try:
+            cur.execute(" INSERT INTO order_details (o_id, p_id, u_id, qty, purchase_type) VALUES (%s, %s, %s, %s, %s)",
+                        (order_id, items[1], user_id, items[2], items[3],))
+            mysql.connection.commit()
+            cur.execute(" DELETE FROM cart where user_id = %s", (user_id,))
+            mysql.connection.commit()
+        except:
+            mysql.connection.rollback()
+            msg = "Error occured"
+            print(msg)
+            return msg
+    cur.close()
+    return render_template('order.html')
+
 if __name__ == '__main__':
     app.secret_key = "dsadasdsadqw2346436%nw9e"
     app.run(debug=True)
