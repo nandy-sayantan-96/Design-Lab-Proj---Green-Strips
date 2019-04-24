@@ -190,6 +190,71 @@ def checkout():
     cur.close()
     return render_template('order.html')
 
+@app.route('/admin-login', methods = ['POST', 'GET'])
+def admin():
+    if request.method == 'POST':
+        password = request.form['password']
+        name = request.form['name']
+
+        cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cur.execute(" SELECT * FROM admin WHERE admin_name = %s", (name,))
+        admin = cur.fetchone()
+        cur.close()
+
+        if admin == None:
+            return " Wrong Admin!!! Intruder!!! Back Off Now!!!!!!!!!!!!!! "
+
+        if password == admin['password'] :
+            session['admin-login'] = True
+            return redirect(url_for('admin_panel'))
+
+        else:
+            return "Passwords not match"
+
+    else :
+        return render_template('admin-login.html')
+
+@app.route('/site/maintenance/admin-panel')
+def admin_panel():
+    try:
+        if session['admin-login'] == True :
+            cur = mysql.connection.cursor()
+            cur.execute(" SELECT * FROM order_details ORDER BY o_id DESC ")
+            order_details = cur.fetchall()
+            cur.close()
+            order_details_dict = {}
+
+            for items in order_details:
+                order_id = items[0]
+                if order_id in order_details_dict.keys():
+                    order_details_dict[order_id]['details'] += [[items[1], items[3], items[4]]]
+                else:
+                    order_details_dict[order_id] = {'user_id' : items[2]}
+                    order_details_dict[order_id]['details'] = [[items[1], items[3], items[4]]]
+                    order_details_dict[order_id]['status'] = items[5]
+            print(order_details_dict)
+            return render_template('admin-panel.html', order_details = order_details_dict, keys = order_details_dict.keys())
+        else:
+            return redirect(url_for('admin_panel'))
+    except:
+        return " Wrong Admin!!! Intruder!!! Back Off Now!!!!!!!!!!!!!! "
+
+@app.route('/site/maintenance/delivery/status/update/<int:order_id>', methods = ['POST'])
+def delivery_status_update(order_id):
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute(" UPDATE order_details SET deliveryandpayment = 'DONE' WHERE o_id = %s", (order_id,) )
+        mysql.connection.commit()
+        msg = "Successfully Completed"
+        print(msg)
+    except:
+        mysql.connection.rollback()
+        msg = "Error occured"
+        print(msg)
+        return msg
+    cur.close()
+    return redirect(url_for('admin_panel'))
+
 if __name__ == '__main__':
     app.secret_key = "dsadasdsadqw2346436%nw9e"
     app.run(debug=True)

@@ -1,0 +1,17 @@
+<html>
+    <body>
+        <div>
+            {% for key in keys %}
+                <p> {{ order_details[key]['user_id'] }} </p>
+                {% for items in order_details[key]['details'] %}
+                    <p> {{ items }}</p>
+                {% endfor %}
+                <p> {{ order_details[key]['status'] }} </p>
+                <form action="/site/maintenance/delivery/status/update/{{key}}" method="POST">
+                    <input type="submit" value="DONE">
+                </form>
+                <hr>
+            {% endfor %}
+        </div>
+    </body>
+</html>
