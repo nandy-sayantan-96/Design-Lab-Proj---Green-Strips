@@ -1,0 +1,15 @@
+<html>
+    <body>
+        <div>
+            {% for prodcuts in cart_prods %}
+                <form action="" method="POST">
+                    <p>{{ prodcuts['product_id'] }}</p>
+                    <p>{{ prodcuts['qty'] }}</p>
+                    <p>{{ prodcuts['purchase_type'] }}</p>
+                    <input type="submit" value="remove">
+                </form>
+                <hr>
+            {% endfor %}
+        </div>
+    </body>
+</html>

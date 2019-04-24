@@ -134,6 +134,15 @@ def addToCartAdvertise(prod_id):
     addToCart(prod_id, 1)
     return redirect(url_for('advertise'))
 
+@app.route('/cart')
+def cart():
+    user_id = session['user_id']
+    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cur.execute(" SELECT * FROM cart WHERE user_id = %s", (user_id,))
+    cart_prods = cur.fetchall()
+    cur.close()
+    return render_template('cart.html', cart_prods = cart_prods)
+
 if __name__ == '__main__':
     app.secret_key = "dsadasdsadqw2346436%nw9e"
     app.run(debug=True)
