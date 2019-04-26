@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask_mysqldb import MySQL, MySQLdb
 
 app = Flask(__name__)
@@ -6,7 +6,7 @@ app = Flask(__name__)
 ##Database connection
 app.config['MYSQL_HOST'] = '127.0.0.1'
 app.config['MYSQL_USER'] = 'root'
-#app.config['MYSQL_PASSWORD'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'admin'
 app.config['MYSQL_DB'] = 'green_strips'
 mysql = MySQL(app)
 
@@ -14,9 +14,10 @@ mysql = MySQL(app)
 @app.route('/')
 def index():
     loggedIn, name = getLoginDetails()
-    return render_template('home.html', user_data = name)
+    return render_template('index.html', user_data=name)
 
-#Fetch user details if logged in
+
+# Fetch user details if logged in
 def getLoginDetails():
     if 'email' not in session:
         loggedIn = False
@@ -24,17 +25,28 @@ def getLoginDetails():
     else:
         loggedIn = True
         name = session['name']
-    return (loggedIn, name)
+    return loggedIn, name
 
 
 @app.route('/signup', methods=['GET', 'POST'])
 def user_signup():
     return render_template('register.html')
 
-@app.route('/register', methods=['POST'])
+
+@app.route('/buyForm', methods=['GET', 'POST'])
+def buy_form():
+    return render_template('buyform.html')
+
+
+@app.route('/advertiseForm', methods=['GET', 'POST'])
+def advertise_form():
+    return render_template('advertiseform.html')
+
+
+@app.route('/registerUser', methods=['POST'])
 def register_user():
     if request.method == 'POST':
-        #Parse form data
+        # Parse form data
         password = request.form['password']
         email = request.form['email']
         firstName = request.form['firstName']
@@ -44,9 +56,9 @@ def register_user():
         phone = request.form['phone']
         try:
             cur = mysql.connection.cursor()
-            cur.execute("INSERT INTO users (f_name, l_name, organization, address, email, phone, password) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                    (firstName, lastName, organization, address, email, phone, password,))
-            #(hashlib.md5(password.encode()).hexdigest()
+            cur.execute("INSERT INTO users (f_name, l_name, address, email, phone, password) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                        (firstName, lastName, organization, address, email, phone, password,))
+            # (hashlib.md5(password.encode()).hexdigest()
 
             mysql.connection.commit()
             msg = "Registered Successfully"
@@ -55,9 +67,39 @@ def register_user():
             mysql.connection.rollback()
             msg = "Error occured"
             print(msg)
-            return msg
+            return jsonify({'status': False, 'message': msg})
         cur.close()
         return redirect(url_for('index'))
+
+
+@app.route('/registerAdvertiser', methods=['POST'])
+def register_advertiser():
+    if request.method == 'POST':
+        # Parse form data
+        password = request.form['password']
+        email = request.form['email']
+        firstName = request.form['firstName']
+        lastName = request.form['lastName']
+        address = request.form['address']
+        organization = request.form['organization']
+        phone = request.form['phone']
+        try:
+            cur = mysql.connection.cursor()
+            cur.execute("INSERT INTO advertisers (f_name, l_name, organization, address, email, phone, password) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                        (firstName, lastName, organization, address, email, phone, password,))
+            # (hashlib.md5(password.encode()).hexdigest()
+
+            mysql.connection.commit()
+            msg = "Registered Successfully"
+            print(msg)
+        except:
+            mysql.connection.rollback()
+            msg = "Error occured"
+            print(msg)
+            return jsonify({'status': False, 'message': msg})
+        cur.close()
+        return redirect(url_for('index'))
+
 
 @app.route('/login', methods=['POST', 'GET'])
 def login_user():
@@ -70,25 +112,30 @@ def login_user():
         user = cur.fetchone()
         cur.close()
 
-        if user == None:
-            return "Email not registered"
+        if user is None:
+            msg = "Email not registered"
+            return jsonify({'status': False, 'message': msg})
 
-        if password == user['password'] :
+        if password == user['password']:
             session['email'] = user['email']
             session['name'] = user['f_name']
             session['user_id'] = user['id']
-            #return "LOGIN SUCCESS"
-            return redirect(url_for('products'))
+            msg = "User Logged In!"
+            return jsonify({'status': True, 'message': msg})
         else:
-            return "Passwords not match"
+            msg = "Passwords do not match"
+            return jsonify({'status': False, 'message': msg})
 
-    else :
+    else:
         return render_template('login.html')
+
 
 @app.route('/logout', methods=['POST'])
 def logout_user():
     session.clear()
-    return redirect(url_for('index'))
+    msg = "User Logged Out!"
+    return jsonify({'status': True, 'message': msg})
+
 
 @app.route('/products')
 def products():
@@ -96,7 +143,8 @@ def products():
     cur.execute(" SELECT * FROM products ")
     prods = cur.fetchall()
     cur.close()
-    return render_template('products.html', prods = prods)
+    return render_template('buypage.html', prods=prods)
+
 
 @app.route('/advertise')
 def advertise():
@@ -104,12 +152,13 @@ def advertise():
     cur.execute(" SELECT * FROM products ")
     prods = cur.fetchall()
     cur.close()
-    return render_template('advertisement.html', prods = prods)
+    return render_template('advertisepage.html', prods=prods)
+
 
 @app.route('/addToCart/<int:prod_id>', methods=['POST'])
-def addToCart(prod_id, purchase_type = 0):
+def addToCart(prod_id, purchase_type=0):
     loggedIn = getLoginDetails()[0]
-    if loggedIn == False:
+    if not loggedIn:
         return redirect(url_for('login_user'))
     user_id = session['user_id']
     qty = request.form['qty']
@@ -129,10 +178,12 @@ def addToCart(prod_id, purchase_type = 0):
     cur.close()
     return redirect(url_for('products'))
 
+
 @app.route('/addToCartAdvertise/<int:prod_id>', methods=['POST'])
 def addToCartAdvertise(prod_id):
     addToCart(prod_id, 1)
     return redirect(url_for('advertise'))
+
 
 @app.route('/cart')
 def cart():
@@ -141,7 +192,8 @@ def cart():
     cur.execute(" SELECT * FROM cart WHERE user_id = %s", (user_id,))
     cart_prods = cur.fetchall()
     cur.close()
-    return render_template('cart.html', cart_prods = cart_prods)
+    return render_template('user.html', cart_prods=cart_prods)
+
 
 @app.route('/cart_item/remove/<int:cart_item_id>', methods = ['POST'])
 def removerCartItem(cart_item_id):
@@ -158,6 +210,7 @@ def removerCartItem(cart_item_id):
         return msg
     cur.close()
     return redirect(url_for('cart'))
+
 
 @app.route('/checkout', methods = ['POST'])
 def checkout():
@@ -190,6 +243,7 @@ def checkout():
     cur.close()
     return render_template('order.html')
 
+
 @app.route('/admin-login', methods = ['POST', 'GET'])
 def admin():
     if request.method == 'POST':
@@ -213,6 +267,7 @@ def admin():
 
     else :
         return render_template('admin-login.html')
+
 
 @app.route('/site/maintenance/admin-panel')
 def admin_panel():
@@ -239,6 +294,7 @@ def admin_panel():
     except:
         return " Wrong Admin!!! Intruder!!! Back Off Now!!!!!!!!!!!!!! "
 
+
 @app.route('/site/maintenance/delivery/status/update/<int:order_id>', methods = ['POST'])
 def delivery_status_update(order_id):
     try:
@@ -254,6 +310,7 @@ def delivery_status_update(order_id):
         return msg
     cur.close()
     return redirect(url_for('admin_panel'))
+
 
 if __name__ == '__main__':
     app.secret_key = "dsadasdsadqw2346436%nw9e"

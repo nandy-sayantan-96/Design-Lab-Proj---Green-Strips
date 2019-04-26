@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Green Strips</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/styleadvertise1.css">
+<link rel="stylesheet" href="/static/styleadvertise.css">
+</head>
+
+<body>
+
+<!--snackbar to show confirmations or error messages-->
+<div id="snackbar">Some message..</div>
+
+<!-- Navbar (sit on top) -->
+<div class="w3-top">
+  <div class="w3-bar w3-text-white" id="myNavbar">
+    <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right" href="javascript:void(0);" onclick="toggleFunction()" title="Toggle Navigation Menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <a href="/#home" class="w3-bar-item w3-button">HOME</a>
+    <a href="/#about" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-user"></i> ABOUT</a>
+    <a href="/#work" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-th"></i> OUR WORK</a>
+    <a href="/#contact" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-envelope"></i> CONTACT</a>
+    <a href="/advertise" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-newspaper-o"></i> ADVERTISE</a>
+	<a href="#" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-shopping-bag"></i> BUY</a>
+    <button id="navSignin" onclick="document.getElementById('id01').style.display='block'" class="w3-bar-item w3-button w3-hide-small w3-right w3-hover-red;"><i class="fa fa-sign-in "></i> SIGN IN </button>
+    <button id="navSignout" class="w3-bar-item w3-button w3-hide-small w3-right w3-hover-red;" type="button" onclick="SignOut();"><i class="fa fa-sign-out"></i> SIGN OUT</button>
+  </div>
+
+    <!-- Navbar on small screens -->
+  <div id="navDemo" class="w3-bar-block w3-black w3-hide w3-hide-large w3-hide-medium">
+	<a href="/home" class="w3-bar-item w3-button">HOME</a>
+    <a href="/#about" class="w3-bar-item w3-button" onclick="toggleFunction()">ABOUT</a>
+    <a href="/#work" class="w3-bar-item w3-button" onclick="toggleFunction()">OUR WORK</a>
+    <a href="/#contact" class="w3-bar-item w3-button" onclick="toggleFunction()">CONTACT</a>
+    <a href="/advertise" class="w3-bar-item w3-button"> ADVERTISE</a>
+	<a href="#" class="w3-bar-item w3-button w3-hide-small"> BUY</a>
+    <button id="snavSignin" onclick="toggleFunction(); document.getElementById('id01').style.display='block';" class="w3-bar-item w3-button" type="button">SIGN IN</button>
+    <button id="snavSignout" class="w3-bar-item w3-button" type="button" onclick="toggleFunction();SignOut();"> SIGN OUT</button>
+  </div>
+  <!--SIGN IN PAGE STARTS HERE-->
+		<div id="id01" class="modal">
+			<form id="signinform" class="modal-content animate">
+                <div class="imgcontainer">
+                    <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close">&times;</span>
+                    <img src="/static/images/signin.jpg" alt="Avatar" class="avatar">
+                </div>
+
+                <div class="container">
+                    <label><b>User Email</b></label>
+                    <input type="text" placeholder="Enter Email" name="email" id="username" required>
+
+                    <label><b>Password</b></label>
+                    <input type="password" placeholder="Enter Password" name="password" id="password" required>
+
+                    <div id="error-msg-in"></div>
+                    <div id="success-msg-in"></div>
+                </div>
+
+                <div class="container" style="background-color:#f1f1f1">
+                    <button id="signin" class="submit-btn" type="button" onclick="SignIn()">SIGN IN</button>
+                    <button type="button" class="btnchange"
+                            onclick="document.getElementById('id01').style.display='none'; document.getElementById('id02').style.display='block';">
+                        New member? Sign up here.
+                    </button>
+                </div>
+		  </form>
+		</div>
+    <!--SIGN IN PAGE ends HERE-->
+
+    <!--SIGN UP PAGE starts HERE-->
+    <div id="id02" class="modal">
+      <div class="modal-content animate">
+          <form id="signupform" method="post" action="/signup">
+              <div class="imgcontainer">
+                  <span onclick="signupClose()" class="close" title="Close">&times;</span>
+                  <img src="/static/images/signin.jpg" alt="Avatar" class="avatar">
+              </div>
+
+              <div class="container">
+                  <label><b>User Email</b></label>
+                  <input type="text" placeholder="Enter Email" name="email" id="uname" required>
+
+                  <label><b>Password</b></label>
+                  <input type="password" id="pwd" placeholder="Enter Password" name="password" required>
+
+                  <label><b>Confirm Password</b></label>
+                  <input type="password" id="cpwd" placeholder="Confirm Password" name="confirm-password" required>
+
+                  <div id="error-msg"></div>
+                  <div id="success-msg"></div>
+              </div>
+
+              <div class="container" style="background-color:#f1f1f1">
+                  <button class="submit-btn" id="signup" type="submit" onclick="SignUp()">SIGN UP</button>
+                  <button type="button" class="btnchange"
+                          onclick="document.getElementById('id02').style.display='none'; document.getElementById('id01').style.display='block';">
+                      Sign in here.
+                  </button>
+              </div>
+          </form>
+
+      </div>
+    </div>
+</div>
+
+<!-- First Parallax Image with Logo Text -->
+<div class="bgimg-1 w3-display-container w3-opacity-min" style="min-height: 80%">
+  <div class="w3-display-middle" style="white-space:nowrap;border:0.4em double white;padding:0.5%">
+    <span class="w3-center w3-padding-large w3-wide w3-animate-opacity w3-xxlarge w3-text-white w3-wide">BUY</span>
+  </div>
+</div>
+
+<!--Buy page starts here-->
+
+<br>
+<h2 style="padding:4%;">&emsp;Select products as per your requirement</h2>
+<br>
+
+<div class="row w3-row w3-row-padding">
+  <div class="column w3-col m6">
+    <div class="card">
+    <div class="bag-image w3-center">
+      <img src="/static/images/2bag.jpg" alt="Bag1">
+    </div>
+      <div class="info container">
+        <h2>Book Store Bag</h2>
+        <p class="pid" style="display: none">101</p>
+		<p>PRODUCT DESCRIPTION</p>
+		<p>SIZE : 12.5" x 10" <br/>
+		STRENGTH :Holds upto 3.5 kg.<br/>
+		LIFE SPAN  : 2 months<br/></p>
+		a. Quantity (between 1 and 100):
+		<input type="number" name="quantity" id="qty" min="1" max="100"><br/><br/>
+        <button class="button cart" onclick="addToCart(this)">Add to cart</button>
+    </div>
+   </div>
+  </div>
+  <div class="column w3-col m6">
+    <div class="card">
+    <div class="bag-image w3-center">
+      <img src="/static/images/1bag.jpg" alt="Bag2">
+    </div>
+      <div class="info container">
+        <h2>Medical Store Bag</h2>
+        <p class="pid" style="display: none">102</p>
+		<p>PRODUCT DESCRIPTION</p>
+		<p>SIZE : 9.5" x 7" <br/>
+		STRENGTH :Holds upto 2 kg.<br/>
+		LIFE SPAN : 2 months<br/></p>
+		a. Quantity (between 1 and 100):
+		<input type="number" name="quantity" min="1" max="100"><br/><br/>
+        <button class="button cart" onclick="addToCart(this)">Add to cart</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Buy page ends here-->
+<div class="w3-center">
+<button class="submit-btn w3-padding-large"><a href="/buyForm" style="text-decoration: none">BUY</a></button>
+</div>
+
+</br>
+<footer>
+&copy; Green Strips. All Rights Reserved.</p>
+</footer>
+<script src="/static/script.js"></script>
+<script src="https://github.com/hasura/js-sdk/releases/download/v0.1.3/hasura.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</body>
+</html>

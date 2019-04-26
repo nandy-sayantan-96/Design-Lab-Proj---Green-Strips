@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Green Strips</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/styleadvertise1.css">
+</head>
+
+<body>
+
+<!--snackbar to show confirmations or error messages-->
+<div id="snackbar">Some message..</div>
+
+<!-- Navbar (sit on top) -->
+<div class="w3-top">
+  <div class="w3-bar w3-text-white" id="myNavbar">
+    <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right" href="javascript:void(0);" onclick="toggleFunction()" title="Toggle Navigation Menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <a href="/#home" class="w3-bar-item w3-button">HOME</a>
+    <a href="/#about" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-user"></i> ABOUT</a>
+    <a href="/#work" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-th"></i> OUR WORK</a>
+    <a href="/#contact" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-envelope"></i> CONTACT</a>
+    <a href="/advertise" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-newspaper-o"></i> ADVERTISE</a>
+	<a href="/products" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-shopping-bag"></i> BUY</a>
+	
+	<button id="navSignin" onclick="document.getElementById('id01').style.display='block'" class="w3-bar-item w3-button w3-hide-small w3-right w3-hover-red;"><i class="fa fa-sign-in "></i> SIGN IN </button>
+    <button id="navSignout" class="w3-bar-item w3-button w3-hide-small w3-right w3-hover-red;" type="button" onclick="SignOut();"><i class="fa fa-sign-out"></i> SIGN OUT</button>
+  </div>
+
+    <!-- Navbar on small screens -->
+	<div id="navDemo" class="w3-bar-block w3-black w3-hide w3-hide-large w3-hide-medium">
+	<a href="/#home" class="w3-bar-item w3-button">HOME</a>
+    <a href="/#about" class="w3-bar-item w3-button" onclick="toggleFunction()">ABOUT</a>
+    <a href="/#work" class="w3-bar-item w3-button" onclick="toggleFunction()">OUR WORK</a>
+    <a href="/#contact" class="w3-bar-item w3-button" onclick="toggleFunction()">CONTACT</a>
+    <a href="/advertise" class="w3-bar-item w3-button"> ADVERTISE</a>
+	<a href="/products" class="w3-bar-item w3-button w3-hide-small"> BUY</a>
+    <button id="snavSignin" onclick="toggleFunction(); document.getElementById('id01').style.display='block';" class="w3-bar-item w3-button" type="button">SIGN IN</button>
+    <button id="snavSignout" class="w3-bar-item w3-button" type="button" onclick="toggleFunction();SignOut();"> SIGN OUT</button>
+  </div>
+  
+  
+  <!--SIGN IN PAGE STARTS HERE-->
+		<div id="id01" class="modal">
+			<form id="signinform" class="modal-content animate">
+                <div class="imgcontainer">
+                    <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close">&times;</span>
+                    <img src="/static/images/signin.jpg" alt="Avatar" class="avatar">
+                </div>
+
+                <div class="container">
+                    <label><b>User Email</b></label>
+                    <input type="text" placeholder="Enter Email" name="email" id="username" required>
+
+                    <label><b>Password</b></label>
+                    <input type="password" placeholder="Enter Password" name="password" id="password" required>
+
+                    <div id="error-msg-in"></div>
+                    <div id="success-msg-in"></div>
+                </div>
+
+                <div class="container" style="background-color:#f1f1f1">
+                    <button id="signin" class="submit-btn" type="button" onclick="SignIn()">SIGN IN</button>
+                    <button type="button" class="btnchange"
+                            onclick="document.getElementById('id01').style.display='none'; document.getElementById('id02').style.display='block';">
+                        New member? Sign up here.
+                    </button>
+                </div>
+		  </form>
+		</div>
+    <!--SIGN IN PAGE ends HERE-->
+
+    <!--SIGN UP PAGE starts HERE-->
+    <div id="id02" class="modal">
+      <div class="modal-content animate">
+          <form id="signupform" method="post" action="/signup">
+              <div class="imgcontainer">
+                  <span onclick="signupClose()" class="close" title="Close">&times;</span>
+                  <img src="/static/images/signin.jpg" alt="Avatar" class="avatar">
+              </div>
+
+              <div class="container">
+                  <label><b>User Email</b></label>
+                  <input type="text" placeholder="Enter Email" name="email" id="uname" required>
+
+                  <label><b>Password</b></label>
+                  <input type="password" id="pwd" placeholder="Enter Password" name="password" required>
+
+                  <label><b>Confirm Password</b></label>
+                  <input type="password" id="cpwd" placeholder="Confirm Password" name="confirm-password" required>
+
+                  <div id="error-msg"></div>
+                  <div id="success-msg"></div>
+              </div>
+
+              <div class="container" style="background-color:#f1f1f1">
+                  <button class="submit-btn" id="signup" type="submit" onclick="SignUp()">SIGN UP</button>
+                  <button type="button" class="btnchange"
+                          onclick="document.getElementById('id02').style.display='none'; document.getElementById('id01').style.display='block';">
+                      Sign in here.
+                  </button>
+              </div>
+          </form>
+
+      </div>
+    </div>
+</div>
+<!-- First Parallax Image with Logo Text-->
+<div class="bgimg-1 w3-display-container w3-opacity-min" style="min-height: 60%">
+  <div class="w3-display-middle w3-center" style="border:0.4em double white;padding:0.5%">
+    <span class="w3-xxlarge w3-text-white w3-wide">Buyer Informaion</span>
+  </div>
+</div>
+
+<!-- Container (Form Section) -->
+<div class="w3-content w3-container w3-padding-64" id="portfolio">
+  <h3 class="w3-center">Please fill in the following details.</h3>
+  <form action="___________" method="post">
+1. Name:</br>
+<input type="text" name="buy_name" required><br/><br/>
+2. Email:<br/>
+<input type="email" name="buy_email" required><br/><br/>
+3. Address:</br>
+<input type="text" name="address" required ><br/><br/>
+4. Zipcode:</br>
+<input type="number" name="zipcode" required ><br/><br/>
+ <h3>Localities we  serve</h3>
+ <img src="/static/images/location.jpg" alt="Location" style="width:100%">
+5. Locality:
+<select name="location" required>
+  <option label=" "></option>
+  <option value="kankurganchi" required>Kankurganchi</option>
+  <option value="bangur" required>Bangur</option>
+  <option value="saltlake" required>Salt Lake</option>
+  <option value="collegestreet required">College Street</option>
+</select></br></br>
+6. Phone:</br>
+<input type="number" name="contact_phone" required ><br/><br/>
+<br/>
+<div class="w3-center"><button class="submit-btn w3-padding-large" type="submit" ><a href="/cart" style="text-decoration: none">SUBMIT</a></button></div>
+</form>
+</div>
+<footer>
+&copy; Green Strips. All Rights Reserved.</p>
+</footer>
+<script src="/static/script.js"></script>
+<script src="https://github.com/hasura/js-sdk/releases/download/v0.1.3/hasura.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</body>
+</html>
