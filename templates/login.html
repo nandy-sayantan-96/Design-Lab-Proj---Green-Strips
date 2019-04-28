@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>	
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Green Strips</title>  
+    <link rel="stylesheet" href="/static/login.css">
+</head>
+</head>
+
+<body>
+	<div id="login-box">
+		<form action="/login" method="POST">
+			<div class="left">
+				<div>
+					{% with messages = get_flashed_messages() %}
+					{% if messages %}
+					{% for message in messages %}
+					<div class="alert">
+						{{ message }}
+						<button class="closebtn" onclick="this.parentElement.style.display='none';">&times;</button>
+					</div>
+					{% endfor %}
+					{% endif %}
+					{% endwith %}
+				</div>
+				<h1>Sign In</h1>
+				<input type="email" name="email" required placeholder="Email"/>
+				<input type="password" name="password" required placeholder="Password"/>
+				<input type="submit" name="signup_submit" value="Sign me in"/>
+			</div>
+		</form>
+	  
+		<div class="right">
+			<br><br><br><br><br><br><br>
+			<button class="signin"><a href="/advertiseForm" style="text-decoration: none;color:white;">Create a new account</a></button>
+		</div>
+		<div class="or">OR</div>
+	</div>
+</body>
+<div class="footer">
+  <p>&copy; Green Strips. All Rights Reserved.</p>
+</div>
+</html>

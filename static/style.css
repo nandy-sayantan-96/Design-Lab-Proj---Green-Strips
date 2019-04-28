@@ -86,6 +86,8 @@ input[type=text], input[type=password], input[type=email], input[type=number], s
 }
 /*button styling*/
 .submit-btn{
+  width: auto;
+  padding: 10px 18px;
   border:3px solid #138D75;
   border-radius: 5px;
   background-color: #138D75;
@@ -113,7 +115,7 @@ input[type=text], input[type=password], input[type=email], input[type=number], s
 button {
     background-color: #4CAF50;
     color: white;
-    padding: 2px 20px;
+    padding: 10px 18px;
     margin: 1px 0;
     border: none;
     cursor: pointer;
@@ -129,6 +131,14 @@ button:hover {
     width: auto;
     padding: 10px 18px;
     background-color: #E74C3C;
+    border:3px solid #E74C3C;
+    border-radius: 5px;
+    color: white;
+}
+.cancelbtn:hover  {
+  font-weight: bold;
+  background-color: white;
+  color:#E74C3C;
 }
 /* The snackbar - position it at the bottom and in the middle of the screen */
 #snackbar {
@@ -149,6 +159,30 @@ button:hover {
 
 /* Show the snackbar when clicking on a button (class added with JavaScript) */
 #snackbar.show {
+    visibility: visible; /* Show the snackbar */
+/* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+However, delay the fade out process for 2.5 seconds */
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+.flash {
+    visibility: hidden; /* Hidden by default. Visible on click */
+    min-width: 250px; /* Set a default minimum width */
+    margin-left: -125px; /* Divide value of min-width by 2 */
+    background-color: #333; /* Black background color */
+    color: #fff; /* White text color */
+    text-align: center; /* Centered text */
+    border:2px solid white;
+    border-radius: 2px; /* Rounded borders */
+    padding: 16px; /* Padding */
+    position: fixed; /* Sit on top of the screen */
+    z-index: 1; /* Add a z-index if needed */
+    left: 50%; /* Center the snackbar */
+    top: 50px; /* 30px from the top */
+}
+/* Show the snackbar when clicking on a button (class added with JavaScript) */
+.flash.show {
     visibility: visible; /* Show the snackbar */
 /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
 However, delay the fade out process for 2.5 seconds */
@@ -255,6 +289,29 @@ span.psw {
     cursor: pointer;
 }
 
+.alert {
+  position: relative;
+  padding: 20px;
+  background-color: #f1938c; /* Red */
+  color: white;
+  margin-bottom: 15px;
+}
+
+/* The close button */
+button.closebtn {
+  color: white;
+  font-weight: bold;
+  float: right;
+  padding: 5px;
+  font-size: 12px;
+  line-height: 10px;
+  margin-left: 10px;
+}
+
+/* When moving the mouse over the close button */
+button.closebtn:hover {
+  color: black;
+}
 /* Add Zoom Animation */
 .animate {
     -webkit-animation: animatezoom 0.6s;

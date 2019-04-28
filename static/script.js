@@ -21,19 +21,32 @@ snavSignout.style.display='none';
 
 /*check if user is logged in and then show button*/
 window.onload = function(){
-    if(hasura.user.token!=null){
-        console.log('user logged in');
-        navSignin.style.display='none';
-        navSignout.style.display='block';
-        snavSignin.style.display='none';
-        snavSignout.style.display='block';
-    }else{
+    $.ajax({
+        url: '/loggedin',
+        type: 'POST',
+        success: function(response) {
+            if (response.status==true) {
+                console.log('user logged in');
+                navSignin.style.display='none';
+                navSignout.style.display='block';
+                snavSignin.style.display='none';
+                snavSignout.style.display='block';
+            }else{
+                onError(response.message)
+            }
+        },
+        error: function(error) {
+            onError(error);
+        }
+    });
+    function onError(error){
         console.log('user not logged in');
         navSignin.style.display='block';
         navSignout.style.display='none';
         snavSignin.style.display='block';
         snavSignout.style.display='none';
-    }
+    };
+    //flashShow();
 };
 
 // Change style of navbar on scroll
@@ -65,6 +78,19 @@ function snackbarShow() {
 
     // After 3 seconds, remove the show class from DIV
     setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+}
+
+//flash message display function
+function flashShow() {
+    console.log("snacking!")
+    // Get the flash DIV
+    $('.flash').each(function() {
+        // Add the "show" class to DIV
+        $( this ).addClass("show");
+
+        // After 3 seconds, remove the show class from DIV
+        setTimeout(function(){ $( this ).removeClass("show"); }, 3000);
+    });
 }
 
 //clear all input fields on modal close
@@ -131,32 +157,33 @@ function validateSignIn() {
 function SignOut(){
     /* clear session */
     $.ajax({
-            url: '/logout',
-            type: 'POST',
-            success: function(response) {
-                if (response.status==true) {
-                    navSignin.style.display='block';
-                    navSignout.style.display='none';
-                    snavSignin.style.display='block';
-                    snavSignout.style.display='none';
-                    snackbar.innerHTML ="User logged out!";
-                    snackbarShow();
-                }else{
-                    onError(response.message)
-                }
-            },
-            error: function(error) {
-                onError(error);
+        url: '/logout',
+        type: 'POST',
+        success: function(response) {
+            if (response.status==true) {
+                navSignin.style.display='block';
+                navSignout.style.display='none';
+                snavSignin.style.display='block';
+                snavSignout.style.display='none';
+                snackbar.innerHTML ="User logged out!";
+                snackbarShow();
+                window.location='/';
+            }else{
+                onError(response.message)
             }
-        });
-        function onError(error){
-            navSignin.style.display='block';
-            navSignout.style.display='none';
-            snavSignin.style.display='block';
-            snavSignout.style.display='none';
-            snackbar.innerHTML ="Error: "+ error +". Try again!";
-            snackbarShow();
-        };
+        },
+        error: function(error) {
+            onError(error);
+        }
+    });
+    function onError(error){
+        navSignin.style.display='block';
+        navSignout.style.display='none';
+        snavSignin.style.display='block';
+        snavSignout.style.display='none';
+        snackbar.innerHTML ="Error: "+ error +". Try again!";
+        snackbarShow();
+    };
 }
 //on sign in
 function SignIn(){
@@ -199,28 +226,6 @@ function SignIn(){
             snavSignout.style.display='none';
             errorMsgIn.innerHTML ="Error: "+ error;
         };
-        /*
-        hasura.setUsername(document.getElementById("username").value);
-        hasura.auth.login(document.getElementById("password").value,
-        function onSuccess(user){
-            document.getElementById('id01').style.display='none';
-            navSignin.style.display='none';
-            navSignout.style.display='block';
-            snavSignin.style.display='none';
-            snavSignout.style.display='block';
-            snackbar.innerHTML ="User logged in!";
-            snackbarShow();
-        },
-        function onError(r){
-            successMsgIn.style.display='none';
-            errorMsgIn.style.display='block';
-            navSignin.style.display='block';
-            navSignout.style.display='none';
-            snavSignin.style.display='block';
-            snavSignout.style.display='none';
-            errorMsgIn.innerHTML ="Error: "+ (r.code?r.code:r.message);
-        });
-        */
     }
     else{
         errorMsgIn.style.display='block';
@@ -234,26 +239,37 @@ function SignUp(){
         errorMsg.style.display='none';
         successMsg.style.display='block';
         successMsg.innerHTML="Waiting...";
-        hasura.setUsername(document.getElementById("uname").value);
-        hasura.auth.signup(document.getElementById("pwd").value,
-        function onSuccess(){
-            document.getElementById('id02').style.display='none';
-            navSignin.style.display='none';
-            navSignout.style.display='block';
-            snavSignin.style.display='none';
-            snavSignout.style.display='block';
-            snackbar.innerHTML ="User created successfully!";
-            snackbarShow();
-        },
-        function onError(r){
+
+        $.ajax({
+            url: '/register',
+            data: $('#signupform').serialize(),
+            type: 'POST',
+            success: function(response) {
+                if (response.status==true) {
+                    document.getElementById('id02').style.display='none';
+                    navSignin.style.display='none';
+                    navSignout.style.display='block';
+                    snavSignin.style.display='none';
+                    snavSignout.style.display='block';
+                    snackbar.innerHTML ="User created successfully!";
+                    snackbarShow();
+                }else{
+                    onError(response.message)
+                }
+            },
+            error: function(error) {
+                onError(error);
+            }
+        });
+        function onError(error){
             successMsg.style.display='none';
             errorMsg.style.display='block';
             navSignin.style.display='block';
             navSignout.style.display='none';
             snavSignin.style.display='block';
             snavSignout.style.display='none';
-            errorMsg.innerHTML ="Error: "+ (r.code?r.code:r.message)+". Try again!";
-        });
+            errorMsg.innerHTML ="Error: "+ error +". Try again!";
+        };
     }
     else{
         errorMsg.style.display='block';

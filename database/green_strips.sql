@@ -102,10 +102,9 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`p_id`, `p_name`, `description`, `image`, `price_ad`, `price_buy`) VALUES
-(1, 'Bag001', NULL, '1.png', 50, 100),
-(2, 'Bag002', NULL, '2.png', 60, 120),
-(3, 'Bag003', NULL, '3.png', 70, 130);
-
+(1,'Book Store Bag','SIZE : 12.5\" x 10\"\r\nSTRENGTH : Holds upto 3.5 kg.\r\nLIFE SPAN  : 2 months','1.jpg',5,1),
+(2,'Medical Store Bag','SIZE : 9.5\" x 7\"\r\nSTRENGTH : Holds upto 2 kg.\r\nLIFE SPAN  : 2 months','2.jpg',4,1),
+(3,'Pamphlets','SIZE : 7.5\" x 9\"\r\nMATERIAL : Eco - friendly paper.\r\nLIFE SPAN  : 6 months','3.jpg',3,0);
 -- --------------------------------------------------------
 
 --

@@ -1,4 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+import json
+
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash
 from flask_mysqldb import MySQL, MySQLdb
 
 app = Flask(__name__)
@@ -18,6 +20,12 @@ def index():
 
 
 # Fetch user details if logged in
+@app.route('/loggedin', methods=['GET', 'POST'])
+def check_login():
+    loggedIn, name = getLoginDetails()
+    return jsonify({'status': loggedIn, 'name': name})
+
+
 def getLoginDetails():
     if 'email' not in session:
         loggedIn = False
@@ -43,36 +51,7 @@ def advertise_form():
     return render_template('advertiseform.html')
 
 
-@app.route('/registerUser', methods=['POST'])
-def register_user():
-    if request.method == 'POST':
-        # Parse form data
-        password = request.form['password']
-        email = request.form['email']
-        firstName = request.form['firstName']
-        lastName = request.form['lastName']
-        address = request.form['address']
-        organization = request.form['organization']
-        phone = request.form['phone']
-        try:
-            cur = mysql.connection.cursor()
-            cur.execute("INSERT INTO users (f_name, l_name, address, email, phone, password) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                        (firstName, lastName, organization, address, email, phone, password,))
-            # (hashlib.md5(password.encode()).hexdigest()
-
-            mysql.connection.commit()
-            msg = "Registered Successfully"
-            print(msg)
-        except:
-            mysql.connection.rollback()
-            msg = "Error occured"
-            print(msg)
-            return jsonify({'status': False, 'message': msg})
-        cur.close()
-        return redirect(url_for('index'))
-
-
-@app.route('/registerAdvertiser', methods=['POST'])
+@app.route('/register', methods=['POST'])
 def register_advertiser():
     if request.method == 'POST':
         # Parse form data
@@ -98,7 +77,7 @@ def register_advertiser():
             print(msg)
             return jsonify({'status': False, 'message': msg})
         cur.close()
-        return redirect(url_for('index'))
+        return jsonify({'status': True, 'message': msg})
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -113,18 +92,18 @@ def login_user():
         cur.close()
 
         if user is None:
-            msg = "Email not registered"
-            return jsonify({'status': False, 'message': msg})
+            flash("Email not registered")
+            return redirect(url_for('login_user'))
 
         if password == user['password']:
             session['email'] = user['email']
             session['name'] = user['f_name']
             session['user_id'] = user['id']
-            msg = "User Logged In!"
-            return jsonify({'status': True, 'message': msg})
+            flash('You were successfully logged in')
+            return redirect(url_for('index'))
         else:
-            msg = "Passwords do not match"
-            return jsonify({'status': False, 'message': msg})
+            flash("Incorrect Password")
+            return redirect(url_for('login_user'))
 
     else:
         return render_template('login.html')
@@ -148,6 +127,10 @@ def products():
 
 @app.route('/advertise')
 def advertise():
+    loggedIn = getLoginDetails()[0]
+
+    if not loggedIn:
+        return redirect(url_for('login_user'))
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cur.execute(" SELECT * FROM products ")
     prods = cur.fetchall()
@@ -155,7 +138,7 @@ def advertise():
     return render_template('advertisepage.html', prods=prods)
 
 
-@app.route('/addToCart/<int:prod_id>', methods=['POST'])
+# @app.route('/addToCart/<int:prod_id>', methods=['POST'])
 def addToCart(prod_id, purchase_type=0):
     loggedIn = getLoginDetails()[0]
     if not loggedIn:
@@ -165,28 +148,51 @@ def addToCart(prod_id, purchase_type=0):
     try:
         cur = mysql.connection.cursor()
         cur.execute("INSERT INTO cart (user_id, product_id, qty, purchase_type) VALUES (%s, %s, %s, %s)",
-                (user_id, prod_id, qty, purchase_type,))
+                    (user_id, prod_id, qty, purchase_type,))
 
         mysql.connection.commit()
         msg = "Added to Cart Successfully"
-        print(msg)
+        flash(msg)
+
     except:
         mysql.connection.rollback()
         msg = "Error occured"
-        print(msg)
-        return msg
+        flash(msg)
+        return redirect(url_for('advertise'))
+        # return {'status': False, 'message': msg}
     cur.close()
-    return redirect(url_for('products'))
+    return redirect(url_for('advertise'))
 
 
 @app.route('/addToCartAdvertise/<int:prod_id>', methods=['POST'])
 def addToCartAdvertise(prod_id):
     addToCart(prod_id, 1)
     return redirect(url_for('advertise'))
+    # return response
+
+
+'''
+@app.route('/checkCart', methods=['POST'])
+def check_cart():
+    user_id = session['user_id']
+    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cur.execute(" SELECT 1 FROM cart WHERE user_id = %s", (user_id,))
+    cart_prods = cur.fetchall()
+    cur.close()
+    if len(cart_prods) > 0:
+        msg = "Products exist in cart"
+        return jsonify({'status': True, 'message': msg})
+    else:
+        msg = "No products in your cart"
+        return jsonify({'status': False, 'message': msg})
+'''
 
 
 @app.route('/cart')
 def cart():
+    loggedIn = getLoginDetails()[0]
+    if not loggedIn:
+        return redirect(url_for('login_user'))
     user_id = session['user_id']
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cur.execute(" SELECT * FROM cart WHERE user_id = %s", (user_id,))
@@ -212,12 +218,25 @@ def removerCartItem(cart_item_id):
     return redirect(url_for('cart'))
 
 
-@app.route('/checkout', methods = ['POST'])
+@app.route('/order')
+def order():
+    loggedIn = getLoginDetails()[0]
+    if not loggedIn:
+        return redirect(url_for('login_user'))
+    user_id = session['user_id']
+    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cur.execute(" SELECT * FROM order_details WHERE u_id = %s", (user_id,))
+    order_prods = cur.fetchall()
+    cur.close()
+    return render_template('order.html', order_prods=order_prods)
+
+
+@app.route('/checkout', methods=['POST'])
 def checkout():
     cur = mysql.connection.cursor()
     cur.execute(" SELECT * FROM order_details ")
     orders = cur.fetchall()
-    if len(orders) == 0 :
+    if len(orders) == 0:
         order_id = 1
     else:
         cur.execute(" SELECT o_id FROM order_details ORDER BY o_id DESC LIMIT 1")
@@ -241,10 +260,11 @@ def checkout():
             print(msg)
             return msg
     cur.close()
-    return render_template('order.html')
+
+    return redirect(url_for('order'))
 
 
-@app.route('/admin-login', methods = ['POST', 'GET'])
+@app.route('/admin-login', methods=['POST', 'GET'])
 def admin():
     if request.method == 'POST':
         password = request.form['password']

@@ -15,6 +15,18 @@
 <body>
 <!--snackbar to show confirmations or error messages-->
 <div id="snackbar">Some message..</div>
+<div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+    <div class="flash show">
+        {{ message }}
+        <button class="closebtn" onclick="this.parentElement.style.display='none';">&times;</button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+</div>
 
 <!-- Navbar (sit on top) -->
 <div class="w3-top">
@@ -27,9 +39,9 @@
     <a href="#work" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-th"></i> OUR WORK</a>
     <a href="#contact" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-envelope"></i> CONTACT</a>
 	<a href="/advertise" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-newspaper-o"></i> ADVERTISE</a>
-	<a href="/products" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-shopping-bag"></i> BUY</a>
+	<a href="/buyForm" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-shopping-bag"></i> BUY</a>
 
-    <button id="navSignin" onclick="document.getElementById('id01').style.display='block'" class="w3-bar-item w3-button w3-hide-small w3-right w3-hover-red;"><i class="fa fa-sign-in "></i> SIGN IN </button>
+    <button id="navSignin" onclick="window.location='/login';" class="w3-bar-item w3-button w3-hide-small w3-right w3-hover-red;"><i class="fa fa-sign-in "></i> SIGN IN </button>
     <button id="navSignout" class="w3-bar-item w3-button w3-hide-small w3-right w3-hover-red;" type="button" onclick="SignOut();"><i class="fa fa-sign-out"></i> SIGN OUT</button>
   </div>
 
@@ -40,8 +52,8 @@
     <a href="#work" class="w3-bar-item w3-button" onclick="toggleFunction()">OUR WORK</a>
     <a href="#contact" class="w3-bar-item w3-button" onclick="toggleFunction()">CONTACT</a>
     <a href="/advertise" class="w3-bar-item w3-button"> ADVERTISE</a>
-	<a href="/products" class="w3-bar-item w3-button w3-hide-small"> BUY</a>
-    <button id="snavSignin" onclick="toggleFunction(); document.getElementById('id01').style.display='block';" class="w3-bar-item w3-button" type="button">SIGN IN</button>
+	<a href="/buyForm" class="w3-bar-item w3-button w3-hide-small"> BUY</a>
+    <button id="snavSignin" onclick="toggleFunction(); window.location='/login';" class="w3-bar-item w3-button" type="button">SIGN IN</button>
     <button id="snavSignout" class="w3-bar-item w3-button" type="button" onclick="toggleFunction();SignOut();"> SIGN OUT</button>
   </div>
   <!--SIGN IN PAGE STARTS HERE-->
@@ -65,49 +77,13 @@
 
                 <div class="container" style="background-color:#f1f1f1">
                     <button id="signin" class="submit-btn" type="button" onclick="SignIn()">SIGN IN</button>
-                    <button type="button" class="btnchange"
-                            onclick="document.getElementById('id01').style.display='none'; document.getElementById('id02').style.display='block';">
+                    <button id="signup" class="btnchange" onclick="window.location='/advertiseForm';">
                         New member? Sign up here.
                     </button>
                 </div>
 		  </form>
 		</div>
     <!--SIGN IN PAGE ends HERE-->
-
-    <!--SIGN UP PAGE starts HERE-->
-    <div id="id02" class="modal">
-      <div class="modal-content animate">
-          <form id="signupform" method="post" action="/signup">
-              <div class="imgcontainer">
-                  <span onclick="signupClose()" class="close" title="Close">&times;</span>
-                  <img src="/static/images/signin.jpg" alt="Avatar" class="avatar">
-              </div>
-
-              <div class="container">
-                  <label><b>User Email</b></label>
-                  <input type="text" placeholder="Enter Email" name="email" id="uname" required>
-
-                  <label><b>Password</b></label>
-                  <input type="password" id="pwd" placeholder="Enter Password" name="password" required>
-
-                  <label><b>Confirm Password</b></label>
-                  <input type="password" id="cpwd" placeholder="Confirm Password" name="confirm-password" required>
-
-                  <div id="error-msg"></div>
-                  <div id="success-msg"></div>
-              </div>
-
-              <div class="container" style="background-color:#f1f1f1">
-                  <button class="submit-btn" id="signup" type="submit" onclick="SignUp()">SIGN UP</button>
-                  <button type="button" class="btnchange"
-                          onclick="document.getElementById('id02').style.display='none'; document.getElementById('id01').style.display='block';">
-                      Sign in here.
-                  </button>
-              </div>
-          </form>
-
-      </div>
-    </div>
 </div>
 <!-- First Parallax Image with Logo Text -->
 <div class="bgimg-1 w3-display-container w3-opacity-min" id="home">
