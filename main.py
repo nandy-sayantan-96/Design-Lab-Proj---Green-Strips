@@ -8,7 +8,7 @@ app = Flask(__name__)
 ##Database connection
 app.config['MYSQL_HOST'] = '127.0.0.1'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'admin'
+#app.config['MYSQL_PASSWORD'] = 'admin'
 app.config['MYSQL_DB'] = 'green_strips'
 mysql = MySQL(app)
 
@@ -35,6 +35,33 @@ def getLoginDetails():
         name = session['name']
     return loggedIn, name
 
+@app.route('/user-profile-info')
+def user_profile():
+    loggedIn = getLoginDetails()[0]
+    if loggedIn == False:
+        return redirect(url_for('login_user'))
+    else:
+        user_id = session['user_id']
+        cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cur.execute(" SELECT * FROM users WHERE id = %s", (user_id,))
+        user = cur.fetchone()
+        cur.close()
+        return jsonify(user)
+
+'''
+@app.route('/user-profile-info-update')
+def user_profile_update():
+    loggedIn = getLoginDetails()[0]
+    if loggedIn == False:
+        return redirect(url_for('login_user'))
+    else:
+        user_id = session['user_id']
+        cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cur.execute(" SELECT * FROM users WHERE id = %s", (user_id,))
+        user = cur.fetchone()
+        cur.close()
+        return 'SUCCESS'
+'''
 
 @app.route('/signup', methods=['GET', 'POST'])
 def user_signup():
