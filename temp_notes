@@ -2,6 +2,8 @@ if row[0] == email and row[1] == hashlib.md5(password.encode()).hexdigest():
 url:  edit_user
 
 
+total amount
+
 advertiseform.html
 	Add confirm password option box
     Add JS checkers
@@ -11,16 +13,17 @@ advertiseform.html
 
 Passwords: xyz@abc.com : 1233
            red@john.com : 123
-
-'''
-@app.route('/buyForm', methods=['GET', 'POST'])
-def buy_form():
-    return render_template('buyform.html')
+           admin1 : 1234
 
 
-@app.route('/advertiseForm', methods=['GET', 'POST'])
-def advertise_form():
-    return render_template('advertiseform.html')
-
-
-'''
+                    <!--<table>
+                    {% for items in order_details[key]['details'] %}
+                        <tr>
+                            {{ for item in items }}
+                                <td>{{ item }}</td>
+                            {{ endfor }}
+                        </tr>
+                    {% endfor %}
+                    </table>
+                    -->
+                </div>

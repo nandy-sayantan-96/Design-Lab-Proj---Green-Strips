@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" >
 
-<head>	
+<head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Green Strips</title>  
+	<title>Green Strips</title>
     <link rel="stylesheet" href="/static/style/login.css">
 </head>
 </head>
@@ -11,12 +11,14 @@
 <body>
 	<div id="login-box">
 		<div class="left">
-			<h1>Admin Sign In</h1>
-			<input type="text" name="username" placeholder="Username" />
-			<input type="password" name="password" placeholder="Password" />
-			<input type="submit" name="signup_submit" value="Sign me in" />
+			<form action="/admin-login" method="POST">
+				<h1>Admin Sign In</h1>
+				<input type="text" name="username" placeholder="Username" />
+				<input type="password" name="password" placeholder="Password" />
+				<input type="submit" name="signup_submit" value="Sign me in" />
+			</form>
 		</div>
-	  
+
 		<div class="right">
 			<br><br><br><br><br><br><br>
 			<button class="signin"><a href="/login" style="text-decoration: none;color:white;">Sign in as user</a></button>

@@ -96,7 +96,7 @@
     {% for items in cart_prods %}
         <div class="container">
             <form action="/cart_item/remove/{{ items['cart_item_id'] }}" method="POST">
-                <img src="/static/images/Planet_Earth.jpg" style="width:90px;">
+                <img src="/static/img/prod/{{ products['image'] }}" alt="{{ products['p_name'] }}" style="width:90px;">
                 <p>Cart Item ID: {{ items['cart_item_id'] }}</p>
                 <p>Product Name: {{ products[items['product_id']] }}</p>
                 <p>Quantity: {{ items['qty'] }}</p>

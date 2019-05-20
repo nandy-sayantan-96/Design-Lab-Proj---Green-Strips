@@ -1,0 +1,86 @@
+<html>
+    <head>
+        <style>
+            h1{
+                text-align: center;
+                font-weight: 900;
+                margin: 10px;
+            }
+
+            #orders-admin{
+                border: 1px solid;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            #container{
+                border: 2px solid;
+                width: 70%;
+                margin: 0 auto;
+                box-sizing: border-box;
+            }
+
+            #user-details{
+                border: 2px solid blue;
+                width: 40%;
+                padding: 10px;
+                box-sizing: border-box;
+            }
+
+            #order-admin::after{
+                clear: both;
+            }
+
+            table, tr, td, th{
+                border: 1px solid;
+                border-collapse: collapse;
+            }
+
+            table{
+                margin: 5px;
+            }
+
+        </style>
+    </head>
+    <body>
+        <h1>ADMIN PANEL</h1>
+        <div id='container'>
+            <h4>USER DETAILS</h4>
+            {% for key in keys %}
+            <div id="orders-admin">
+                <div id="user-details">
+                    {% for items in order_details[key]['user_details'] %}
+                        <p> {{ items }} </p>
+                    {% endfor %}
+                </div>
+                <div id='order-product-details'>
+                    <h4>ORDER DETAILS</h4>
+                    <table>
+                        <tr>
+                            <th>Prodcut Name</th>
+                            <th>Qty</th>
+                            <th>Purchase Type</th>
+                        </tr>
+                    {% for items in order_details[key]['details'] %}
+                        <tr>
+                            {% for item in items %}
+                                <td>{{ item }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    </table>
+                </div>
+                <div id='status'>
+                    <h4>STATUS</h4>
+                    <p> {{ order_details[key]['status'] }} </p>
+                    {% if order_details[key]['status'] != 'DONE' %}
+                    <form action="/site/maintenance/delivery/status/update/{{key}}" method="POST">
+                        <input type="submit" value="DONE">
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </body>
+</html>

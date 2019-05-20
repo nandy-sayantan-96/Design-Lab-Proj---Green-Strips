@@ -302,22 +302,21 @@ def order():
     return render_template('order.html', order_prods=order_prods, user_data=name,
                             products = products_dict, purchase = purchase_dict)
 
-
+#Admin-Login Page
 @app.route('/admin-login', methods=['POST', 'GET'])
 def admin():
     if request.method == 'POST':
         password = request.form['password']
-        name = request.form['name']
-
+        name = request.form['username']
         cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cur.execute(" SELECT * FROM admin WHERE admin_name = %s", (name,))
-        admin = cur.fetchone()
+        admin_details = cur.fetchone()
         cur.close()
 
-        if admin == None:
+        if admin_details == None:
             return " Wrong Admin!!! Intruder!!! Back Off Now!!!!!!!!!!!!!! "
 
-        if password == admin['password']:
+        elif password == admin_details['password']:
             session['admin-login'] = True
             return redirect(url_for('admin_panel'))
 
@@ -327,31 +326,31 @@ def admin():
     else:
         return render_template('admin-login.html')
 
-
+#Opens up the admin panel
 @app.route('/site/maintenance/admin-panel')
 def admin_panel():
-    try:
-        if session['admin-login'] == True:
-            cur = mysql.connection.cursor()
-            cur.execute(" SELECT * FROM order_details ORDER BY o_id DESC ")
-            order_details = cur.fetchall()
-            cur.close()
-            order_details_dict = {}
+    if session['admin-login'] == True:
+        cur = mysql.connection.cursor()
+        cur.execute(" SELECT * FROM order_details ORDER BY o_id DESC ")
+        order_details = cur.fetchall()
+        cur.close()
+        order_details_dict = {}
 
-            for items in order_details:
-                order_id = items[0]
-                if order_id in order_details_dict.keys():
-                    order_details_dict[order_id]['details'] += [[items[1], items[3], items[4]]]
-                else:
-                    order_details_dict[order_id] = {'user_id': items[2]}
-                    order_details_dict[order_id]['details'] = [[items[1], items[3], items[4]]]
-                    order_details_dict[order_id]['status'] = items[5]
-            print(order_details_dict)
-            return render_template('admin-panel.html', order_details=order_details_dict, keys=order_details_dict.keys())
-        else:
-            return redirect(url_for('admin_panel'))
-    except:
-        return " Wrong Admin!!! Intruder!!! Back Off Now!!!!!!!!!!!!!! "
+        for items in order_details:
+            order_id = items[0]
+            cur = mysql.connection.cursor()
+            cur.execute(" SELECT f_name, address, email, phone FROM users WHERE id = %s", (items[2],))
+            user_data = cur.fetchone()
+            if order_id in order_details_dict.keys():
+                order_details_dict[order_id]['details'] += [[products_dict[items[1]], items[3], purchase_dict[items[4]]]]
+            else:
+                order_details_dict[order_id] = {'user_details': user_data}
+                order_details_dict[order_id]['details'] = [[products_dict[items[1]], items[3], purchase_dict[items[4]]]]
+                order_details_dict[order_id]['status'] = items[5]
+        print(order_details_dict)
+        return render_template('admin-panel.html', order_details=order_details_dict, keys=order_details_dict.keys())
+    else:
+        return redirect(url_for('admin_panel'))
 
 
 @app.route('/site/maintenance/delivery/status/update/<int:order_id>', methods=['POST'])
