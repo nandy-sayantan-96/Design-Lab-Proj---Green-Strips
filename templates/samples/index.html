@@ -30,7 +30,7 @@
 
 <!-- Navbar (sit on top) -->
 <div class="w3-top">
-    <div class="w3-bar w3-black" id="myNavbar">
+    <div class="w3-bar w3-text-white" id="myNavbar">
         <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right" href="javascript:void(0);"
            onclick="toggleFunction()" title="Toggle Navigation Menu">
             <i class="fa fa-bars"></i>
@@ -40,26 +40,23 @@
         <a href="#work" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-th"></i> OUR WORK</a>
         <a href="#contact" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-envelope"></i> CONTACT</a>
         <a href="/advertise" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-newspaper-o"></i> ADVERTISE</a>
-        <!--<a href="/buyForm" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-shopping-bag"></i> BUY</a>
-         additions made to code part 1. Part 2 starts from line 72 -->
-
-        <div class="w3-dropdown-hover w3-hide-small w3-right" id="dropdown">
-            <button class="w3-padding w3-button" style="min-width:140px">Hello {{ user_data }}
-                <i class="fa fa-caret-down"></i>
-            </button>
-            <div class="w3-dropdown-content w3-bar-block w3-card-4">
-                <a href="/userDetails" class="w3-bar-item w3-button">User Details</a>
-                <a href="/cart" class="w3-bar-item w3-button">Cart Details</a>
-                <a href="/order" class="w3-bar-item w3-button">Order Details</a>
-                <button id="navSignout" class="w3-bar-item w3-button" type="button"
-                        onclick="SignOut();"> Sign Out
-                </button>
+        <a href="/buyForm" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-shopping-bag"></i> BUY</a>
+        <!-- additions made to code part 1. Part 2 starts from line 72 -->
+        <div class="dropdown">
+            <button class="dropbtn"><i class="fa fa-info"></i> USER INFORMATION</button>
+            <div class="dropdown-content">
+                <a href="/userDetails">User Details</a>
+                <a href="/cart">Cart Details</a>
+                <a href="/order">Order Details</a>
             </div>
         </div>
         <!-- end -->
         <button id="navSignin" onclick="window.location='/login';"
                 class="w3-bar-item w3-button w3-hide-small w3-right w3-hover-red;"><i class="fa fa-sign-in "></i> SIGN
             IN
+        </button>
+        <button id="navSignout" class="w3-bar-item w3-button w3-hide-small w3-right w3-hover-red;" type="button"
+                onclick="SignOut();"><i class="fa fa-sign-out"></i> SIGN OUT
         </button>
     </div>
 
@@ -74,7 +71,7 @@
 
         <!-- Part 2 -->
         <div class="dropdown w3-bar-item">
-            <button class="dropbtn w3-bar-item w3-button w3-hide-small w3-right w3-hover-red">ACCOUNT</button>
+            <button class="dropbtn"> USER INFORMATION</button>
             <div class="dropdown-content">
                 <a href="/userDetails">User Details</a>
                 <a href="/cart">Cart Details</a>
@@ -90,16 +87,40 @@
             OUT
         </button>
     </div>
+    <!--SIGN IN PAGE STARTS HERE-->
+    <div id="id01" class="modal">
+        <form id="signinform" class="modal-content animate">
+            <div class="imgcontainer">
+                <span onclick="document.getElementById('id01').style.display='none'" class="close"
+                      title="Close">&times;</span>
+                <img src="/static/images/signin.jpg" alt="Avatar" class="avatar">
+            </div>
+
+            <div class="container">
+                <label><b>User Email</b></label>
+                <input type="text" placeholder="Enter Email" name="email" id="username" required>
+
+                <label><b>Password</b></label>
+                <input type="password" placeholder="Enter Password" name="password" id="password" required>
+
+                <div id="error-msg-in"></div>
+                <div id="success-msg-in"></div>
+            </div>
+
+            <div class="container" style="background-color:#f1f1f1">
+                <button id="signin" class="submit-btn" type="button" onclick="SignIn()">SIGN IN</button>
+                <button id="signup" class="btnchange" onclick="window.location='/advertiseForm';">
+                    New member? Sign up here.
+                </button>
+            </div>
+        </form>
+    </div>
+    <!--SIGN IN PAGE ends HERE-->
 </div>
 <!-- First Parallax Image with Logo Text -->
 <div class="bgimg-1 w3-display-container w3-opacity-min" id="home">
     <div class="w3-display-middle" style="white-space:nowrap;">
-        <span class="w3-center w3-padding-large w3-xlarge w3-wide w3-animate-opacity">
-            <img src="/static/images/logo.jpg"
-                 class="w3-round w3-image w3-center"
-                 alt="Our Logo" width="100%"
-                 height="100%">
-        </span>
+        <span class="w3-center w3-padding-large w3-xlarge w3-wide w3-animate-opacity"><img src="/static/images/logo.jpg" class="w3-round w3-image w3-center" alt="Our Logo" width="100%" height="100%"></span>
     </div>
 </div>
 
@@ -107,10 +128,7 @@
 <div class="w3-content w3-container w3-padding-64" id="about">
     <h3 class="w3-center">ABOUT US</h3>
     <p class="w3-center"><em>Stop using plastic bags. Save the earth.</em></p>
-    <p>We are a Kolkata based startup aiming at reducing plastic usage in our city. We sell durable, convenient paper
-        bags at the price of plastic ones. Green Strips basically addresses three problems: proliferation of plastic
-        waste, inaccessibility of advertisements for small local businessmen and lack of employment opportunities for
-        underprivileged women..</p>
+    <p>We are a Kolkata based startup aiming at reducing plastic usage in our city. We sell durable, convenient paper bags at the price of plastic ones. Green Strips basically addresses three problems: proliferation of plastic waste, inaccessibility of advertisements for small local businessmen and lack of employment opportunities for      underprivileged women..</p>
     <div class="w3-row">
         <div class="w3-col m6 w3-center w3-padding-large">
             <img src="/static/images/img3.jpg" class="w3-round w3-image " alt="Where we work" width="500" height="444">
@@ -147,7 +165,7 @@
 
         <div class="mySlides fade">
             <div class="numbertext">2 / 3</div>
-            <img src="/static/images/why_advertise.jpg" style="width:100%; height:10%">
+            <img src="/static/images/signin.jpg" style="width:100%; height:10%">
             <div class="text"></div>
         </div>
 
@@ -192,40 +210,33 @@
         </div>
 
         <div class="w3-col m3">
-            <img src="/static/images/titan.jpg" style="width:100%" onclick="onClick(this)" class="w3-hover-opacity"
-                 alt="Titan">
+            <img src="/static/images/titan.jpg" style="width:100%" onclick="onClick(this)" class="w3-hover-opacity" alt="Titan">
         </div>
 
         <div class="w3-col m3">
-            <img src="/static/images/visa.jpg" style="width:100%" onclick="onClick(this)" class="w3-hover-opacity"
-                 alt="Visa">
+            <img src="/static/images/visa.jpg" style="width:100%" onclick="onClick(this)" class="w3-hover-opacity" alt="Visa">
         </div>
 
         <div class="w3-col m3">
-            <img src="/static/images/dm.jpg" style="width:100%" onclick="onClick(this)"
-                 class="w3-hover-opacity" alt="Dhanwantary Medicare">
+            <img src="/static/images/am.jpg" style="width:100%" onclick="onClick(this)" class="w3-hover-opacity" alt="Mission">
         </div>
     </div>
 
     <div class="w3-row-padding w3-center w3-section">
         <div class="w3-col m3">
-            <img src="/static/images/am.jpg" style="width:100%" onclick="onClick(this)" class="w3-hover-opacity"
-                 alt="Arena Animation">
+            <img src="/static/images/dm.jpg" style="width:100%" onclick="onClick(this)" class="w3-hover-opacity" alt="Dhanwantary Medicare">
         </div>
 
         <div class="w3-col m3">
-            <img src="/static/images/fr.jpg" style="width:100%" onclick="onClick(this)" class="w3-hover-opacity"
-                 alt="Frank Ross Pharmacy">
+            <img src="/static/images/fr.jpg" style="width:100%" onclick="onClick(this)" class="w3-hover-opacity" alt="Frank Ross">
         </div>
 
         <div class="w3-col m3">
-            <img src="/static/images/paytm.png" style="width:100%" onclick="onClick(this)" class="w3-hover-opacity"
-                 alt="Paytm">
+            <img src="/static/images/paytm.png" style="width:100%" onclick="onClick(this)" class="w3-hover-opacity" alt="Paytm">
         </div>
 
         <div class="w3-col m3">
-            <img src="/static/images/ph.jpg" style="width:100%" onclick="onClick(this)" class="w3-hover-opacity"
-                 alt="Pranic Healing">
+            <img src="/static/images/ph.jpg" style="width:100%" onclick="onClick(this)" class="w3-hover-opacity" alt="Pranic Healing">
         </div>
     </div>
 </div>
@@ -269,6 +280,6 @@
 </footer>
 
 <script src="/static/scripts/script.js"></script>
-<script src="/static/scripts/jquery-3.4.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 /*accessing the buttons and message divs*/
 var navSignin = document.getElementById('navSignin');
 var navSignout = document.getElementById('navSignout');
+var dropdown = document.getElementById('dropdown');
 
 var snavSignin = document.getElementById('snavSignin');
 var snavSignout = document.getElementById('snavSignout');
@@ -15,9 +16,9 @@ var snackbar = document.getElementById('snackbar');
 
 /*initially hide signin/out buttons*/
 navSignin.style.display='none';
-navSignout.style.display='none';
+dropdown.style.display='none';
 snavSignin.style.display='none';
-snavSignout.style.display='none';
+//snavSignout.style.display='none';
 
 /*check if user is logged in and then show button*/
 window.onload = function(){
@@ -28,6 +29,7 @@ window.onload = function(){
             if (response.status==true) {
                 console.log('user logged in');
                 navSignin.style.display='none';
+                dropdown.style.display='block';
                 navSignout.style.display='block';
                 snavSignin.style.display='none';
                 snavSignout.style.display='block';
@@ -42,23 +44,13 @@ window.onload = function(){
     function onError(error){
         console.log('user not logged in');
         navSignin.style.display='block';
+        dropdown.style.display='none';
         navSignout.style.display='none';
         snavSignin.style.display='block';
         snavSignout.style.display='none';
     };
     //flashShow();
 };
-
-// Change style of navbar on scroll
-window.onscroll = function() {myFunction()};
-function myFunction() {
-    var navbar = document.getElementById("myNavbar");
-    if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
-        navbar.className = "w3-bar" + " w3-card-2" + " w3-animate-top" + " w3-white";
-    } else {
-        navbar.className = navbar.className.replace(" w3-card-2 w3-animate-top w3-white", "w3-bar w3-text-white");
-    }
-}
 
 // Modal Image Gallery
 function onClick(element) {
@@ -161,6 +153,7 @@ function SignOut(){
         type: 'POST',
         success: function(response) {
             if (response.status==true) {
+                dropdown.style.display='none'
                 navSignin.style.display='block';
                 navSignout.style.display='none';
                 snavSignin.style.display='block';

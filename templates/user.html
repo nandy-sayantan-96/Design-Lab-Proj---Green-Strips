@@ -4,44 +4,48 @@
     <title>Green Strips</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/static/style.css">
-    <link rel="stylesheet" href="/static/styleclasses.css">
-    <link rel="stylesheet" href="/static/user.css">
+    <link rel="stylesheet" href="/static/style/style.css">
+    <link rel="stylesheet" href="/static/style/styleadvertise1.css">
 </head>
 
 <body>
-<!--snackbar to show confirmations or error messages-->
-<div id="snackbar">Some message..</div>
-<div>
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    {% for message in messages %}
-    <div class="flash show">
-        {{ message }}
-        <button class="closebtn" onclick="this.parentElement.style.display='none';">&times;</button>
-    </div>
-    {% endfor %}
-    {% endif %}
-    {% endwith %}
-</div>
 
 <!-- Navbar (sit on top) -->
 <div class="w3-top">
-    <div class="w3-bar w3-text-white" id="myNavbar">
-        <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right" href="javascript:void(0);" onclick="toggleFunction()" title="Toggle Navigation Menu">
+    <div class="w3-bar w3-black" id="myNavbar">
+        <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right" href="javascript:void(0);"
+           onclick="toggleFunction()" title="Toggle Navigation Menu">
             <i class="fa fa-bars"></i>
         </a>
         <a href="/#home" class="w3-bar-item w3-button">HOME</a>
         <a href="/#about" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-user"></i> ABOUT</a>
         <a href="/#work" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-th"></i> OUR WORK</a>
-        <a href="/#contact" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-envelope"></i> CONTACT</a>
-        <a href="/advertise" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-newspaper-o"></i> ADVERTISE</a>
-        <a href="/buyForm" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-shopping-bag"></i> BUY</a>
-        <button id="navSignin" disabled onclick="window.location='/login';" class="w3-bar-item w3-button w3-hide-small w3-right w3-hover-red;"><i class="fa fa-sign-in "></i> SIGN IN </button>
-        <button id="navSignout" class="w3-bar-item w3-button w3-hide-small w3-right w3-hover-red;" type="button" onclick="SignOut();"><i class="fa fa-sign-out"></i> SIGN OUT</button>
+        <a href="/#contact" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-envelope"></i>
+            CONTACT</a>
+        <a href="/advertise" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-newspaper-o"></i>
+            ADVERTISE</a>
+        <!--<a href="/buyForm" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-shopping-bag"></i> BUY</a>
+         additions made to code part 1. Part 2 starts from line 72 -->
+
+        <div class="w3-dropdown-hover w3-hide-small w3-right" id="dropdown">
+            <button class="w3-padding w3-button" style="min-width:140px">Hello {{ user_data['f_name'] }}
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="w3-dropdown-content w3-bar-block w3-card-4">
+                <a href="/userDetails" class="w3-bar-item w3-button">User Details</a>
+                <a href="/cart" class="w3-bar-item w3-button">Cart Details</a>
+                <a href="/order" class="w3-bar-item w3-button">Order Details</a>
+                <button id="navSignout" class="w3-bar-item w3-button" type="button"
+                        onclick="SignOut();"> Sign Out
+                </button>
+            </div>
+        </div>
+        <!-- end -->
+        <button id="navSignin" onclick="window.location='/login';"
+                class="w3-bar-item w3-button w3-hide-small w3-right w3-hover-red;"><i class="fa fa-sign-in "></i> SIGN
+            IN
+        </button>
     </div>
 
     <!-- Navbar on small screens -->
@@ -51,77 +55,60 @@
         <a href="/#work" class="w3-bar-item w3-button" onclick="toggleFunction()">OUR WORK</a>
         <a href="/#contact" class="w3-bar-item w3-button" onclick="toggleFunction()">CONTACT</a>
         <a href="/advertise" class="w3-bar-item w3-button"> ADVERTISE</a>
-        <a href="/buyForm" class="w3-bar-item w3-button w3-hide-small"> BUY</a>
-        <button id="snavSignin" disabled onclick="toggleFunction(); window.location='/login';" class="w3-bar-item w3-button" type="button">SIGN IN</button>
-        <button id="snavSignout" class="w3-bar-item w3-button" type="button" onclick="toggleFunction();SignOut();"> SIGN OUT</button>
-    </div>
 
-    <!--SIGN IN PAGE STARTS HERE-->
-    <!-- <div id="id01" class="modal">
-        <form id="signinform" class="modal-content animate">
-            <div class="imgcontainer">
-                <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close">&times;</span>
-                <img src="/static/images/signin.jpg" alt="Avatar" class="avatar">
+        <!-- Part 2 -->
+        <div class="dropdown w3-bar-item">
+            <button class="dropbtn w3-bar-item w3-button w3-hide-small w3-right w3-hover-red">ACCOUNT</button>
+            <div class="dropdown-content">
+                <a href="/userDetails">User Details</a>
+                <a href="/cart">Cart Details</a>
+                <a href="/order">Order Details</a>
             </div>
-
-            <div class="container">
-                <label><b>User Email</b></label>
-                <input type="text" placeholder="Enter Email" name="email" id="username" required>
-
-                <label><b>Password</b></label>
-                <input type="password" placeholder="Enter Password" name="password" id="password" required>
-
-                <div id="error-msg-in"></div>
-                <div id="success-msg-in"></div>
-            </div>
-
-            <div class="container" style="background-color:#f1f1f1">
-                <button id="signin" class="submit-btn" type="button" onclick="SignIn()">SIGN IN</button>
-                <button type="button" class="btnchange"
-                        onclick=""window.location='/advertiseForm';">
-                    New member? Sign up here.
-                </button>
-            </div>
-      </form>
-    </div> -->
-    <!--SIGN IN PAGE ends HERE-->
-
-</div>
-
-<!-- First Parallax Image with Logo Text-->
-<div class="back1-img bgimg-3 w3-display-container w3-opacity-min" style="height: 55%">
-    <div class="w3-display-middle w3-center" style="border:0.4em double white;padding:0.5%">
-        <span class="w3-xxlarge w3-text-white w3-wide">Cart</span>
-    </div>
-</div>
-<!--<div class="loading w3-center w3-xlarge" style="margin: auto;">Loading...</div>-->
-<div class="page" id="pagecon" style="max-width:600px;">
-    {% for products in cart_prods %}
-        <div class="container">
-            <form action="/cart_item/remove/{{ products['cart_item_id'] }}" method="POST">
-                <img src="/static/images/Planet_Earth.jpg" style="width:90px;">
-                <p>Cart Item ID: {{ products['cart_item_id'] }}</p>
-                <p>Product ID: {{ products['product_id'] }}</p>
-                <p>Quantity: {{ products['qty'] }}</p>
-                <p>Purchase Type: {{ products['purchase_type'] }}</p>
-                <input type="submit" value="REMOVE" class="cancelbtn w3-center">
-            </form>
         </div>
-        <hr>
-    {% endfor %}
+        <!-- end -->
+
+        <button id="snavSignin" onclick="toggleFunction(); document.getElementById('id01').style.display='block';"
+                class="w3-bar-item w3-button" type="button">SIGN IN
+        </button>
+        <button id="snavSignout" class="w3-bar-item w3-button" type="button" onclick="toggleFunction();SignOut();"> SIGN
+            OUT
+        </button>
+    </div>
 </div>
-<br/>
-<div class="w3-center">
-    <form action="/checkout" method="POST">
-        <input type="submit" value="CHECK OUT" class="submit-btn">
+<!-- First Parallax Image with Logo Text-->
+<div class="bgimg-other w3-display-container w3-opacity-min">
+    <div class="w3-display-middle w3-center" style="border:0.4em double white;padding:0.5%">
+        <span class="w3-xxlarge w3-text-white w3-wide">User Details</span>
+    </div>
+</div>
+
+<!-- Container (Form Section) -->
+<div class="w3-content w3-container w3-padding-64" id="portfolio">
+    <h3 class="w3-center">User details.</h3>
+    <form action="/edit_user" method="post">
+        1. First Name:<br/>
+        <input type="text" name="f_name" value="{{ user_data['f_name'] }}"><br/><br/>
+        2. Last Name:<br/>
+        <input type="text" name="l_name" value="{{ user_data['l_name'] }}"><br/><br/>
+        3. Organisation name:<br/>
+        <input type="text" name="org_name" value="{{ user_data['organization'] }}"><br/><br/>
+        4. Address:<br/>
+        <input type="text" name="address" value="{{ user_data['address'] }}"><br/><br/>
+        5. Email:<br/>
+        <input type="email" name="email" value="{{ user_data['email'] }}"><br/><br/>
+        6. Phone:<br/>
+        <input type="number" name="phone" value="{{ user_data['phone'] }}"><br/><br/>
+        <br/>
+        <div class="w3-center">
+            <button class="submit-btn w3-padding-large" type="submit">EDIT DETAILS</a>
+            </button>
+        </div>
     </form>
 </div>
-<br/>
 <footer>
     &copy; Green Strips. All Rights Reserved.</p>
 </footer>
-<script src="/static/script.js"></script>
-<script src="https://github.com/hasura/js-sdk/releases/download/v0.1.3/hasura.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="/static/scripts/script.js"></script>
+<script src="/static/scripts/jquery-3.4.1.min.js"></script>
 </body>
 </html>

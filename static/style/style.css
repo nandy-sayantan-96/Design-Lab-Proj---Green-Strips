@@ -8,9 +8,9 @@ body, html {
     height:100%;
 }
 /* Create a Parallax Effect */
-.bgimg-1, .bgimg-2, .bgimg-3 {
+.bgimg-1, .bgimg-2, .bgimg-3, .bgimg-other {
     background-attachment: fixed;
-    background-position: center;
+    background-position: bottom;
     background-repeat: no-repeat;
     background-size: cover;
 }
@@ -31,6 +31,12 @@ body, html {
 .bgimg-3 {
     background-image: url("/static/images/back1.jpg");
     min-height: 400px;
+}
+
+/* All other Page image (Logo. Full height) */
+.bgimg-other {
+    background-image: url('/static/images/back1.jpg');
+    min-height: 45%;
 }
 
 .w3-wide {letter-spacing: 10px;}
@@ -406,3 +412,38 @@ height:10%;
 background:#424949;
 text-align:center;
 }
+
+.dropbtn {
+    color: white;
+    padding:8px 16px;
+    font-size: 15px;
+    border: none;
+	outline:none;
+	background-color:inherit;
+
+}
+
+.dropdown {
+    position: absolute;
+	right:130px;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 200px;
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {background-color: lightgray;}
+.dropdown:hover .dropdown-content {display: block;}
+.dropdown:hover .dropbtn {background-color: lightgray; color:black;}

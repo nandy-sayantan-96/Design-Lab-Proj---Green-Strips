@@ -4,14 +4,15 @@
     <title>Green Strips</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="/static/style/style.css">
-    <link rel="stylesheet" href="/static/style/styleadvertise1.css">
+    <link rel="stylesheet" href="/static/style/styleclasses.css">
+    <link rel="stylesheet" href="/static/style/user.css">
 </head>
 
 <body>
-
 <!--snackbar to show confirmations or error messages-->
 <div id="snackbar">Some message..</div>
 <div>
@@ -30,16 +31,15 @@
 <!-- Navbar (sit on top) -->
 <div class="w3-top">
     <div class="w3-bar w3-black" id="myNavbar">
-        <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right" href="javascript:void(0);"
-           onclick="toggleFunction()" title="Toggle Navigation Menu">
+        <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right" href="javascript:void(0);" onclick="toggleFunction()" title="Toggle Navigation Menu">
             <i class="fa fa-bars"></i>
         </a>
         <a href="/#home" class="w3-bar-item w3-button">HOME</a>
         <a href="/#about" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-user"></i> ABOUT</a>
         <a href="/#work" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-th"></i> OUR WORK</a>
         <a href="/#contact" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-envelope"></i> CONTACT</a>
-        <!--<a href="/advertise" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-newspaper-o"></i> ADVERTISE</a>
-        <a href="/buyForm" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-shopping-bag"></i> BUY</a>
+        <a href="/advertise" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-newspaper-o"></i> ADVERTISE</a>
+        <!--<a href="/buyForm" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-shopping-bag"></i> BUY</a>
          additions made to code part 1. Part 2 starts from line 72 -->
 
         <div class="w3-dropdown-hover w3-hide-small w3-right" id="dropdown">
@@ -68,10 +68,11 @@
         <a href="/#about" class="w3-bar-item w3-button" onclick="toggleFunction()">ABOUT</a>
         <a href="/#work" class="w3-bar-item w3-button" onclick="toggleFunction()">OUR WORK</a>
         <a href="/#contact" class="w3-bar-item w3-button" onclick="toggleFunction()">CONTACT</a>
-
+        <a href="/advertise" class="w3-bar-item w3-button"> ADVERTISE</a>
+        <a href="/buyForm" class="w3-bar-item w3-button w3-hide-small"> BUY</a>
         <!-- Part 2 -->
         <div class="dropdown w3-bar-item">
-            <button class="dropbtn w3-bar-item w3-button w3-hide-small w3-right w3-hover-red"> ACCOUNT</button>
+            <button class="dropbtn w3-bar-item w3-button w3-hide-small w3-right w3-hover-red">ACCOUNT</button>
             <div class="dropdown-content">
                 <a href="/userDetails">User Details</a>
                 <a href="/cart">Cart Details</a>
@@ -79,55 +80,44 @@
             </div>
         </div>
         <!-- end -->
-
-        <button id="snavSignin" onclick="toggleFunction(); window.location='/login';" class="w3-bar-item w3-button"
-                type="button">SIGN IN
-        </button>
-        <button id="snavSignout" class="w3-bar-item w3-button" type="button" onclick="toggleFunction();SignOut();"> SIGN
-            OUT
-        </button>
+        <button id="snavSignin" disabled onclick="toggleFunction(); window.location='/login';" class="w3-bar-item w3-button" type="button">SIGN IN</button>
+        <button id="snavSignout" class="w3-bar-item w3-button" type="button" onclick="toggleFunction();SignOut();"> SIGN OUT</button>
     </div>
 </div>
+
 <!-- First Parallax Image with Logo Text-->
-<div class="bgimg-other w3-display-container w3-opacity-min">
+<div class="back1-img bgimg-other w3-display-container w3-opacity-min">
     <div class="w3-display-middle w3-center" style="border:0.4em double white;padding:0.5%">
-        <span class="w3-xxlarge w3-text-white w3-wide">User Registration Informaion</span>
+        <span class="w3-xxlarge w3-text-white w3-wide">Cart Details</span>
     </div>
 </div>
-
-<!-- Container (Form Section) -->
-<div class="w3-content w3-container w3-padding-64" id="portfolio">
-    <h3 class="w3-center">Please fill in the following details.</h3>
-    <form action="/register" name="advertiseform" id="advertiseform" method="post">
-        1. First Name:<br/>
-        <input type="text" name="f_name" required><br/><br/>
-        2. Last Name:<br/>
-        <input type="text" name="l_name" required><br/><br/>
-        3. Organisation Name:<br/>
-        <input type="text" name="org_name" required><br/><br/>
-        4. Address:<br/>
-        <input type="text" name="address" required><br/><br/>
-        5. Email:<br/>
-        <input type="email" name="email" required><br/><br/>
-        6. Phone:<br/>
-        <input type="number" name="phone" required><br/><br/>
-        7. Password:<br/>
-        <input type="password" name="password" required><br/><br/>
-        <h3>Localities we serve</h3>
-        <img src="/static/images/location.jpg" alt="Location" style="width:100%">
-        <br/>
-        <div class="w3-center">
-            <button class="submit-btn w3-padding-large" type="submit">
-                SUBMIT
-            </button>
+<!--<div class="loading w3-center w3-xlarge" style="margin: auto;">Loading...</div>-->
+<div class="page" id="pagecon" style="max-width:600px;">
+    {% for items in cart_prods %}
+        <div class="container">
+            <form action="/cart_item/remove/{{ items['cart_item_id'] }}" method="POST">
+                <img src="/static/images/Planet_Earth.jpg" style="width:90px;">
+                <p>Cart Item ID: {{ items['cart_item_id'] }}</p>
+                <p>Product Name: {{ products[items['product_id']] }}</p>
+                <p>Quantity: {{ items['qty'] }}</p>
+                <p>Purchase Type: {{ purchase[items['purchase_type']] }}</p>
+                <input type="submit" value="REMOVE" class="cancelbtn w3-center">
+            </form>
         </div>
+        <hr>
+    {% endfor %}
+</div>
+<br/>
+<div class="w3-center">
+    <form action="/checkout" method="POST">
+        <input type="submit" value="CHECK OUT" class="submit-btn">
     </form>
 </div>
+<br/>
 <footer>
-    &copy; Green Strips. All Rights Reserved.
+    &copy; Green Strips. All Rights Reserved.</p>
 </footer>
 <script src="/static/scripts/script.js"></script>
-<script src="/static/scripts/advform.js"></script>
 <script src="/static/scripts/jquery-3.4.1.min.js"></script>
 </body>
 </html>

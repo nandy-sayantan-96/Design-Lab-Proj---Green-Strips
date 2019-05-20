@@ -1,12 +1,30 @@
-<html>
-    <head>
-        <title>Sign up</title>
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>	
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Green Strips</title>  
+    <link rel="stylesheet" href="/static/style/login.css">
 </head>
-    <body>
-        <form action="/admin-login" method="POST">
-            <p>NAME: <input type="text" name="name"></p>
-            <P>Password: <input type="password" name="password" id="password" required></p>
-            <p><input type="submit" value="Register"></p>
-        </form>
-    </body>
+</head>
+
+<body>
+	<div id="login-box">
+		<div class="left">
+			<h1>Admin Sign In</h1>
+			<input type="text" name="username" placeholder="Username" />
+			<input type="password" name="password" placeholder="Password" />
+			<input type="submit" name="signup_submit" value="Sign me in" />
+		</div>
+	  
+		<div class="right">
+			<br><br><br><br><br><br><br>
+			<button class="signin"><a href="/login" style="text-decoration: none;color:white;">Sign in as user</a></button>
+		</div>
+		<div class="or">OR</div>
+	</div>
+</body>
+<div class="footer">
+  <p>&copy; Green Strips. All Rights Reserved.</p>
+</div>
 </html>

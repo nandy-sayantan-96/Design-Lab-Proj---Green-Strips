@@ -119,7 +119,7 @@ function insertAdv(){
                     console.log(response);
                     snackbar.innerHTML="Advertiser details has been added. Redirecting...";
                     snackbarShow();
-                    setTimeout(function(){window.location='/products';}, 2000);
+                    setTimeout(function(){window.location='/advertise';}, 2000);
                 }else{
                     onError(response.message)
                 }

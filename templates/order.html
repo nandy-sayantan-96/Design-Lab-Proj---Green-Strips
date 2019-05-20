@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/static/style.css">
-    <link rel="stylesheet" href="/static/styleclasses.css">
-    <link rel="stylesheet" href="/static/user.css">
+    <link rel="stylesheet" href="/static/style/style.css">
+    <link rel="stylesheet" href="/static/style/styleclasses.css">
+    <link rel="stylesheet" href="/static/style/user.css">
 </head>
 
 <body>
@@ -31,8 +31,9 @@
 
 <!-- Navbar (sit on top) -->
 <div class="w3-top">
-    <div class="w3-bar w3-text-white" id="myNavbar">
-        <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right" href="javascript:void(0);" onclick="toggleFunction()" title="Toggle Navigation Menu">
+    <div class="w3-bar w3-black" id="myNavbar">
+        <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right" href="javascript:void(0);"
+           onclick="toggleFunction()" title="Toggle Navigation Menu">
             <i class="fa fa-bars"></i>
         </a>
         <a href="/#home" class="w3-bar-item w3-button">HOME</a>
@@ -40,9 +41,27 @@
         <a href="/#work" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-th"></i> OUR WORK</a>
         <a href="/#contact" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-envelope"></i> CONTACT</a>
         <a href="/advertise" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-newspaper-o"></i> ADVERTISE</a>
-        <a href="/buyForm" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-shopping-bag"></i> BUY</a>
-        <button id="navSignin" disabled onclick="window.location='/login';" class="w3-bar-item w3-button w3-hide-small w3-right w3-hover-red;"><i class="fa fa-sign-in "></i> SIGN IN </button>
-        <button id="navSignout" class="w3-bar-item w3-button w3-hide-small w3-right w3-hover-red;" type="button" onclick="SignOut();"><i class="fa fa-sign-out"></i> SIGN OUT</button>
+        <!--<a href="/buyForm" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-shopping-bag"></i> BUY</a>
+         additions made to code part 1. Part 2 starts from line 72 -->
+
+        <div class="w3-dropdown-hover w3-hide-small w3-right" id="dropdown">
+            <button class="w3-padding w3-button" style="min-width:140px">Hello {{ user_data }}
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="w3-dropdown-content w3-bar-block w3-card-4">
+                <a href="/userDetails" class="w3-bar-item w3-button">User Details</a>
+                <a href="/cart" class="w3-bar-item w3-button">Cart Details</a>
+                <a href="/order" class="w3-bar-item w3-button">Order Details</a>
+                <button id="navSignout" class="w3-bar-item w3-button" type="button"
+                        onclick="SignOut();"> Sign Out
+                </button>
+            </div>
+        </div>
+        <!-- end -->
+        <button id="navSignin" onclick="window.location='/login';"
+                class="w3-bar-item w3-button w3-hide-small w3-right w3-hover-red;"><i class="fa fa-sign-in "></i> SIGN
+            IN
+        </button>
     </div>
 
     <!-- Navbar on small screens -->
@@ -53,8 +72,23 @@
         <a href="/#contact" class="w3-bar-item w3-button" onclick="toggleFunction()">CONTACT</a>
         <a href="/advertise" class="w3-bar-item w3-button"> ADVERTISE</a>
         <a href="/buyForm" class="w3-bar-item w3-button w3-hide-small"> BUY</a>
-        <button id="snavSignin" disabled onclick="toggleFunction(); window.location='/login';" class="w3-bar-item w3-button" type="button">SIGN IN</button>
-        <button id="snavSignout" class="w3-bar-item w3-button" type="button" onclick="toggleFunction();SignOut();"> SIGN OUT</button>
+        <!-- Part 2 -->
+        <div class="dropdown w3-bar-item">
+            <button class="dropbtn w3-bar-item w3-button w3-hide-small w3-right w3-hover-red">ACCOUNT</button>
+            <div class="dropdown-content">
+                <a href="/userDetails">User Details</a>
+                <a href="/cart">Cart Details</a>
+                <a href="/order">Order Details</a>
+            </div>
+        </div>
+        <!-- end -->
+
+        <button id="snavSignin" disabled onclick="toggleFunction(); window.location='/login';"
+                class="w3-bar-item w3-button" type="button">SIGN IN
+        </button>
+        <button id="snavSignout" class="w3-bar-item w3-button" type="button" onclick="toggleFunction();SignOut();"> SIGN
+            OUT
+        </button>
     </div>
 
     <!--SIGN IN PAGE STARTS HERE-->
@@ -90,29 +124,29 @@
 </div>
 
 <!-- First Parallax Image with Logo Text-->
-<div class="back1-img bgimg-3 w3-display-container w3-opacity-min" style="height: 55%">
+<div class="back1-img bgimg-other w3-display-container w3-opacity-min">
     <div class="w3-display-middle w3-center" style="border:0.4em double white;padding:0.5%">
-        <span class="w3-xxlarge w3-text-white w3-wide">Your Orders</span>
+        <span class="w3-xxlarge w3-text-white w3-wide">Order Details</span>
     </div>
 </div>
 <!--<div class="loading w3-center w3-xlarge" style="margin: auto;">Loading...</div>-->
 <div class="page" id="pagecon" style="max-width:600px;">
-    {% for products in order_prods %}
-        <div class="container">
-                <img src="/static/images/Planet_Earth.jpg" style="width:90px;">
-                <p>Order ID: {{ products['o_id'] }}</p>
-                <p>Product ID: {{ products['p_id'] }}</p>
-                <p>Quantity: {{ products['qty'] }}</p>
-                <p>Purchase Type: {{ products['purchase_type'] }}</p>
-                <p>Delivery and Payment Status: {{ products['deliveryandpayment'] }}</p>
-        </div>
-        <hr>
+    {% for items in order_prods %}
+    <div class="container">
+        <img src="/static/images/Planet_Earth.jpg" style="width:90px;">
+        <p>Order ID: {{ items['o_id'] }}</p>
+        <p>Product Name: {{ products[items['p_id']] }}</p>
+        <p>Quantity: {{ items['qty'] }}</p>
+        <p>Purchase Type: {{ purchase[items['purchase_type']] }}</p>
+        <p>Delivery and Payment Status: {{ items['deliveryandpayment'] }}</p>
+    </div>
+    <hr>
     {% endfor %}
 </div>
 <footer>
     &copy; Green Strips. All Rights Reserved.</p>
 </footer>
-<script src="/static/script.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="/static/scripts/script.js"></script>
+<script src="/static/scripts/jquery-3.4.1.min.js"></script>
 </body>
 </html>

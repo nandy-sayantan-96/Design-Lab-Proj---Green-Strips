@@ -1,9 +1,15 @@
-import json
-
+#required libraries/files/extensions imported
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash
+import hashlib
 from flask_mysqldb import MySQL, MySQLdb
 
+#Some Global Data used by several functions
+products_dict = {1: 'Book Store Bag', 2:'Medical Store Bag', 3:'Pamphlets'}
+purchase_dict = {0: 'ADVERTISE AND BUY', 1:'ADVERTISE ' , 2:'BUY'}
+
+#Flask object
 app = Flask(__name__)
+app.secret_key = 'nfhgtErY#$09&*!nnYYZZ8955'
 
 ##Database connection
 app.config['MYSQL_HOST'] = '127.0.0.1'
@@ -12,20 +18,20 @@ app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_DB'] = 'green_strips'
 mysql = MySQL(app)
 
-
+#Home Page / Index Page of the website
 @app.route('/')
 def index():
     loggedIn, name = getLoginDetails()
     return render_template('index.html', user_data=name)
 
 
-# Fetch user details if logged in
+#Fetch user details if logged in
 @app.route('/loggedin', methods=['GET', 'POST'])
 def check_login():
     loggedIn, name = getLoginDetails()
     return jsonify({'status': loggedIn, 'name': name})
 
-
+#Returns the name of the user if logged in
 def getLoginDetails():
     if 'email' not in session:
         loggedIn = False
@@ -35,82 +41,77 @@ def getLoginDetails():
         name = session['name']
     return loggedIn, name
 
-@app.route('/user-profile-info')
-def user_profile():
-    loggedIn = getLoginDetails()[0]
-    if loggedIn == False:
-        return redirect(url_for('login_user'))
-    else:
-        user_id = session['user_id']
-        cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cur.execute(" SELECT * FROM users WHERE id = %s", (user_id,))
-        user = cur.fetchone()
-        cur.close()
-        return jsonify(user)
-
-'''
-@app.route('/user-profile-info-update')
-def user_profile_update():
-    loggedIn = getLoginDetails()[0]
-    if loggedIn == False:
-        return redirect(url_for('login_user'))
-    else:
-        user_id = session['user_id']
-        cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cur.execute(" SELECT * FROM users WHERE id = %s", (user_id,))
-        user = cur.fetchone()
-        cur.close()
-        return 'SUCCESS'
-'''
-
+#Returns the User Registration/ Sign-Up
 @app.route('/signup', methods=['GET', 'POST'])
 def user_signup():
-    return render_template('register.html')
-
-
-@app.route('/buyForm', methods=['GET', 'POST'])
-def buy_form():
-    return render_template('buyform.html')
-
-
-@app.route('/advertiseForm', methods=['GET', 'POST'])
-def advertise_form():
     return render_template('advertiseform.html')
 
+#Returns the page containing all information about the logged in user
+@app.route('/userDetails', methods=['GET', 'POST'])
+def user_details():
+    loggedIn, name = getLoginDetails()
+    if not loggedIn:
+        return redirect(url_for('login_user'))
+    user_data = get_user_details()
+    return render_template('user.html', user_data=user_data)
 
+#Returns All detials of the logged in user
+def get_user_details():
+    loggedIn, name = getLoginDetails()
+    if not loggedIn:
+        return redirect(url_for('login_user'))
+    else:
+        user_id = session['user_id']
+        cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cur.execute(" SELECT * FROM users WHERE id = %s", (user_id,))
+        user_data = cur.fetchone()
+        cur.close()
+        return user_data
+
+#Registers a new user; adds the user in the 'users' table
 @app.route('/register', methods=['POST'])
 def register_advertiser():
     if request.method == 'POST':
         # Parse form data
         password = request.form['password']
+        password = hashlib.md5(password.encode()).hexdigest()
         email = request.form['email']
-        firstName = request.form['firstName']
-        lastName = request.form['lastName']
+        firstName = request.form['f_name']
+        lastName = request.form['l_name']
         address = request.form['address']
-        organization = request.form['organization']
+        organization = request.form['org_name']
         phone = request.form['phone']
         try:
-            cur = mysql.connection.cursor()
-            cur.execute("INSERT INTO advertisers (f_name, l_name, organization, address, email, phone, password) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                        (firstName, lastName, organization, address, email, phone, password,))
-            # (hashlib.md5(password.encode()).hexdigest()
-
+            cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+            cur.execute(
+                "INSERT INTO users (f_name, l_name, organization, address, email, phone, password) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                (firstName, lastName, organization, address, email, phone, password,))
             mysql.connection.commit()
-            msg = "Registered Successfully"
-            print(msg)
-        except:
+
+            # On sucessful registration, log the user in
+            cur.execute(" SELECT * FROM users WHERE email = %s", (email,))
+            user = cur.fetchone()
+            session['email'] = user['email']
+            session['name'] = user['f_name']
+            session['user_id'] = user['id']
+            flash('You were successfully registered')
+
+        except Exception as exc:
             mysql.connection.rollback()
             msg = "Error occured"
-            print(msg)
-            return jsonify({'status': False, 'message': msg})
+            flash(str(exc))
+            flash("One or Many Details Already Exists in the System. Contact Admin to retrive the account or Create a new one if required")
+            return redirect(url_for('user_signup'))
+
         cur.close()
-        return jsonify({'status': True, 'message': msg})
+        return redirect(url_for('advertise'))
 
-
+#Checks the entered details and allows legitimate users to log in
 @app.route('/login', methods=['POST', 'GET'])
 def login_user():
     if request.method == 'POST':
         password = request.form['password']
+        password = hashlib.md5(password.encode()).hexdigest()
         email = request.form['email']
 
         cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -135,43 +136,52 @@ def login_user():
     else:
         return render_template('login.html')
 
-
+#Allows the signed in User to Sign Out
 @app.route('/logout', methods=['POST'])
 def logout_user():
     session.clear()
     msg = "User Logged Out!"
     return jsonify({'status': True, 'message': msg})
 
-
+'''
+#Lists all available products
 @app.route('/products')
 def products():
+    loggedIn, name = getLoginDetails()
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cur.execute(" SELECT * FROM products ")
     prods = cur.fetchall()
     cur.close()
-    return render_template('buypage.html', prods=prods)
+    return render_template('buy.html', prods=prods, user_data=name)
+'''
 
-
+#Directs to the products page; all purchase to be done from this page; user must to logged in to see this page
 @app.route('/advertise')
 def advertise():
-    loggedIn = getLoginDetails()[0]
-
+    loggedIn, name = getLoginDetails()
     if not loggedIn:
         return redirect(url_for('login_user'))
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cur.execute(" SELECT * FROM products ")
     prods = cur.fetchall()
     cur.close()
-    return render_template('advertisepage.html', prods=prods)
+    return render_template('advertise.html', prods=prods, user_data=name)
 
 
-# @app.route('/addToCart/<int:prod_id>', methods=['POST'])
-def addToCart(prod_id, purchase_type=0):
+#Adds user selected items in the cart table of the database
+def addToCart(prod_id):
     loggedIn = getLoginDetails()[0]
     if not loggedIn:
         return redirect(url_for('login_user'))
     user_id = session['user_id']
     qty = request.form['qty']
+    purchase_type = request.form['side-book']
+    if purchase_type == 'ssa':
+        purchase_type = 0
+    elif purchase_type == 'bsa':
+        purchase_type = 1
+    elif purchase_type == 'b':
+        purchase_type = 2
     try:
         cur = mysql.connection.cursor()
         cur.execute("INSERT INTO cart (user_id, product_id, qty, purchase_type) VALUES (%s, %s, %s, %s)",
@@ -190,13 +200,11 @@ def addToCart(prod_id, purchase_type=0):
     cur.close()
     return redirect(url_for('advertise'))
 
-
+#Allows users to add items to their carts
 @app.route('/addToCartAdvertise/<int:prod_id>', methods=['POST'])
 def addToCartAdvertise(prod_id):
-    addToCart(prod_id, 1)
+    addToCart(prod_id)
     return redirect(url_for('advertise'))
-    # return response
-
 
 '''
 @app.route('/checkCart', methods=['POST'])
@@ -214,10 +222,10 @@ def check_cart():
         return jsonify({'status': False, 'message': msg})
 '''
 
-
+#Displays the cart of the logged in user
 @app.route('/cart')
 def cart():
-    loggedIn = getLoginDetails()[0]
+    loggedIn, name = getLoginDetails()
     if not loggedIn:
         return redirect(url_for('login_user'))
     user_id = session['user_id']
@@ -225,10 +233,11 @@ def cart():
     cur.execute(" SELECT * FROM cart WHERE user_id = %s", (user_id,))
     cart_prods = cur.fetchall()
     cur.close()
-    return render_template('user.html', cart_prods=cart_prods)
+    return render_template('cart.html', cart_prods=cart_prods, user_data=name,
+                            products = products_dict, purchase = purchase_dict)
 
-
-@app.route('/cart_item/remove/<int:cart_item_id>', methods = ['POST'])
+#Removes selected items from the cart of the user
+@app.route('/cart_item/remove/<int:cart_item_id>', methods=['POST'])
 def removerCartItem(cart_item_id):
     try:
         cur = mysql.connection.cursor()
@@ -244,20 +253,7 @@ def removerCartItem(cart_item_id):
     cur.close()
     return redirect(url_for('cart'))
 
-
-@app.route('/order')
-def order():
-    loggedIn = getLoginDetails()[0]
-    if not loggedIn:
-        return redirect(url_for('login_user'))
-    user_id = session['user_id']
-    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cur.execute(" SELECT * FROM order_details WHERE u_id = %s", (user_id,))
-    order_prods = cur.fetchall()
-    cur.close()
-    return render_template('order.html', order_prods=order_prods)
-
-
+#Places items in the cart to the order page
 @app.route('/checkout', methods=['POST'])
 def checkout():
     cur = mysql.connection.cursor()
@@ -270,10 +266,12 @@ def checkout():
         order_id = cur.fetchone()[0] + 1
     user_id = session['user_id']
 
-    cur.execute(" SELECT user_id, product_id, SUM(qty), purchase_type FROM cart WHERE user_id = %s GROUP BY product_id, purchase_type ", (user_id,))
+    cur.execute(
+        " SELECT user_id, product_id, SUM(qty), purchase_type FROM cart WHERE user_id = %s GROUP BY product_id, purchase_type ",
+        (user_id,))
     cart_details = cur.fetchall()
     print(cart_details)
-    for items in cart_details :
+    for items in cart_details:
         print(items[1], "   ", items[2], items[3])
         try:
             cur.execute(" INSERT INTO order_details (o_id, p_id, u_id, qty, purchase_type) VALUES (%s, %s, %s, %s, %s)",
@@ -290,6 +288,20 @@ def checkout():
 
     return redirect(url_for('order'))
 
+#Shows the order history of the user
+@app.route('/order')
+def order():
+    loggedIn, name = getLoginDetails()
+    if not loggedIn:
+        return redirect(url_for('login_user'))
+    user_id = session['user_id']
+    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cur.execute(" SELECT * FROM order_details WHERE u_id = %s", (user_id,))
+    order_prods = cur.fetchall()
+    cur.close()
+    return render_template('order.html', order_prods=order_prods, user_data=name,
+                            products = products_dict, purchase = purchase_dict)
+
 
 @app.route('/admin-login', methods=['POST', 'GET'])
 def admin():
@@ -305,21 +317,21 @@ def admin():
         if admin == None:
             return " Wrong Admin!!! Intruder!!! Back Off Now!!!!!!!!!!!!!! "
 
-        if password == admin['password'] :
+        if password == admin['password']:
             session['admin-login'] = True
             return redirect(url_for('admin_panel'))
 
         else:
             return "Passwords not match"
 
-    else :
+    else:
         return render_template('admin-login.html')
 
 
 @app.route('/site/maintenance/admin-panel')
 def admin_panel():
     try:
-        if session['admin-login'] == True :
+        if session['admin-login'] == True:
             cur = mysql.connection.cursor()
             cur.execute(" SELECT * FROM order_details ORDER BY o_id DESC ")
             order_details = cur.fetchall()
@@ -331,22 +343,22 @@ def admin_panel():
                 if order_id in order_details_dict.keys():
                     order_details_dict[order_id]['details'] += [[items[1], items[3], items[4]]]
                 else:
-                    order_details_dict[order_id] = {'user_id' : items[2]}
+                    order_details_dict[order_id] = {'user_id': items[2]}
                     order_details_dict[order_id]['details'] = [[items[1], items[3], items[4]]]
                     order_details_dict[order_id]['status'] = items[5]
             print(order_details_dict)
-            return render_template('admin-panel.html', order_details = order_details_dict, keys = order_details_dict.keys())
+            return render_template('admin-panel.html', order_details=order_details_dict, keys=order_details_dict.keys())
         else:
             return redirect(url_for('admin_panel'))
     except:
         return " Wrong Admin!!! Intruder!!! Back Off Now!!!!!!!!!!!!!! "
 
 
-@app.route('/site/maintenance/delivery/status/update/<int:order_id>', methods = ['POST'])
+@app.route('/site/maintenance/delivery/status/update/<int:order_id>', methods=['POST'])
 def delivery_status_update(order_id):
     try:
         cur = mysql.connection.cursor()
-        cur.execute(" UPDATE order_details SET deliveryandpayment = 'DONE' WHERE o_id = %s", (order_id,) )
+        cur.execute(" UPDATE order_details SET deliveryandpayment = 'DONE' WHERE o_id = %s", (order_id,))
         mysql.connection.commit()
         msg = "Successfully Completed"
         print(msg)
@@ -360,5 +372,4 @@ def delivery_status_update(order_id):
 
 
 if __name__ == '__main__':
-    app.secret_key = "dsadasdsadqw2346436%nw9e"
     app.run(debug=True)
