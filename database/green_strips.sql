@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 20, 2019 at 05:40 PM
+-- Generation Time: May 20, 2019 at 08:30 PM
 -- Server version: 10.1.36-MariaDB
 -- PHP Version: 7.1.23
 
@@ -39,7 +39,7 @@ CREATE TABLE `admin` (
 --
 
 INSERT INTO `admin` (`admin_id`, `admin_name`, `password`) VALUES
-(1, 'password', 'password');
+(2, 'admin1', '1234');
 
 -- --------------------------------------------------------
 
@@ -55,14 +55,6 @@ CREATE TABLE `cart` (
   `purchase_type` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Dumping data for table `cart`
---
-
-INSERT INTO `cart` (`cart_item_id`, `user_id`, `product_id`, `qty`, `purchase_type`) VALUES
-(4, 14, 1, 3, 0),
-(5, 14, 1, 4, 1);
-
 -- --------------------------------------------------------
 
 --
@@ -74,6 +66,7 @@ CREATE TABLE `order_details` (
   `p_id` int(11) NOT NULL,
   `u_id` int(11) NOT NULL,
   `qty` int(11) NOT NULL,
+  `total_amount` int(20) NOT NULL,
   `purchase_type` int(11) NOT NULL,
   `deliveryandpayment` varchar(50) NOT NULL DEFAULT 'yet to be done'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -82,15 +75,9 @@ CREATE TABLE `order_details` (
 -- Dumping data for table `order_details`
 --
 
-INSERT INTO `order_details` (`o_id`, `p_id`, `u_id`, `qty`, `purchase_type`, `deliveryandpayment`) VALUES
-(1, 1, 1, 39, 0, 'yet to be delivered'),
-(1, 1, 1, 2, 1, 'yet to be delivered'),
-(1, 2, 1, 11, 0, 'yet to be delivered'),
-(1, 2, 1, 34, 1, 'yet to be delivered'),
-(1, 3, 1, 71, 0, 'yet to be delivered'),
-(2, 2, 1, 212, 1, 'DONE'),
-(3, 1, 14, 23, 1, 'yet to be done'),
-(4, 1, 14, 7, 1, 'yet to be done');
+INSERT INTO `order_details` (`o_id`, `p_id`, `u_id`, `qty`, `total_amount`, `purchase_type`, `deliveryandpayment`) VALUES
+(1, 1, 14, 3, 18, 0, 'yet to be done'),
+(1, 1, 14, 4, 20, 1, 'yet to be done');
 
 -- --------------------------------------------------------
 
@@ -205,13 +192,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `admin`
 --
 ALTER TABLE `admin`
-  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `cart_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `cart_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `products`
