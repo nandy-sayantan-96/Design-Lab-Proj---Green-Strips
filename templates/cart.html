@@ -93,20 +93,21 @@
 </div>
 <!--<div class="loading w3-center w3-xlarge" style="margin: auto;">Loading...</div>-->
 <div class="page" id="pagecon" style="max-width:600px;">
-    {% for items in cart_prods %}
+        {% for products in cart_prods %}
         <div class="container">
-            <form action="/cart_item/remove/{{ items['cart_item_id'] }}" method="POST">
-                <img src="/static/img/prod/{{ products['image'] }}" alt="{{ products['p_name'] }}" style="width:90px;">
-                <p>Cart Item ID: {{ items['cart_item_id'] }}</p>
-                <p>Product Name: {{ products[items['product_id']] }}</p>
-                <p>Quantity: {{ items['qty'] }}</p>
-                <p>Purchase Type: {{ purchase[items['purchase_type']] }}</p>
-                <input type="submit" value="REMOVE" class="cancelbtn w3-center">
-            </form>
+            <img src="/static/img/prod/{{ products['image'] }}" alt="{{ products['p_name'] }}" style="width:90px;">
+            <p>Order ID: {{ products['o_id'] }}</p>
+            <p>Product Name: {{ products['p_name'] }}</p>
+            <pre><p>Description:  {{ products['description'] }}</p></pre>
+            <p>Purchase Type: {{ products['purchase_type'] }}</p>
+            <p>Quantity:      {{ products['qty'] }} </p>
+            <p>Total Price:   Rs. {{ products['total_price'] }} </p>
         </div>
         <hr>
-    {% endfor %}
-</div>
+        {% endfor %}
+    </div>
+
+
 <br/>
 <div class="w3-center">
     <form action="/checkout" method="POST">

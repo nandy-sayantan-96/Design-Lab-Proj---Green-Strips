@@ -8,23 +8,45 @@
             }
 
             #orders-admin{
-                border: 1px solid;
                 width: 100%;
                 box-sizing: border-box;
+                margin-bottom: 5px;
             }
 
             #container{
-                border: 2px solid;
                 width: 70%;
                 margin: 0 auto;
                 box-sizing: border-box;
             }
 
             #user-details{
-                border: 2px solid blue;
+                border: 2px solid;
                 width: 40%;
                 padding: 10px;
                 box-sizing: border-box;
+                height: 265px;
+                float: left;
+                display: inline-block;
+            }
+
+            #order-product-details{
+                border: 2px solid;
+                width: 40%;
+                padding: 10px;
+                box-sizing: border-box;
+                height: 265px;
+                float: left;
+                display: inline-block;
+            }
+
+            #status{
+                border: 2px solid;
+                width: 20%;
+                padding: 10px;
+                box-sizing: border-box;
+                height: 265px;
+                float: left;
+                display: inline-block;
             }
 
             #order-admin::after{
@@ -45,10 +67,10 @@
     <body>
         <h1>ADMIN PANEL</h1>
         <div id='container'>
-            <h4>USER DETAILS</h4>
             {% for key in keys %}
             <div id="orders-admin">
                 <div id="user-details">
+                    <h4>USER DETAILS</h4>
                     {% for items in order_details[key]['user_details'] %}
                         <p> {{ items }} </p>
                     {% endfor %}
@@ -60,6 +82,7 @@
                             <th>Prodcut Name</th>
                             <th>Qty</th>
                             <th>Purchase Type</th>
+                            <th>Total Amount</th>
                         </tr>
                     {% for items in order_details[key]['details'] %}
                         <tr>
@@ -82,5 +105,7 @@
             </div>
             {% endfor %}
         </div>
+
+
     </body>
 </html>

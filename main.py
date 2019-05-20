@@ -230,11 +230,23 @@ def cart():
         return redirect(url_for('login_user'))
     user_id = session['user_id']
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cur.execute(" SELECT * FROM cart WHERE user_id = %s", (user_id,))
+    cur.execute(
+        " SELECT * FROM cart JOIN products ON cart.product_id=products.p_id WHERE user_id = %s;",
+        (user_id,))
     cart_prods = cur.fetchall()
     cur.close()
-    return render_template('cart.html', cart_prods=cart_prods, user_data=name,
-                            products = products_dict, purchase = purchase_dict)
+    for product in cart_prods:
+        if product['purchase_type'] == 0:
+            product['purchase_type'] = "Advertise and Buy"
+            price = product['price_ad'] + product['price_buy']
+        elif product['purchase_type'] == 1:
+            product['purchase_type'] = "Advertise"
+            price = product['price_ad']
+        else:
+            product['purchase_type'] = "Buy"
+            price = product['price_buy']
+        product['total_price'] = price * product['qty']
+    return render_template('cart.html', cart_prods=cart_prods, user_data=name)
 
 #Removes selected items from the cart of the user
 @app.route('/cart_item/remove/<int:cart_item_id>', methods=['POST'])
@@ -265,17 +277,28 @@ def checkout():
         cur.execute(" SELECT o_id FROM order_details ORDER BY o_id DESC LIMIT 1")
         order_id = cur.fetchone()[0] + 1
     user_id = session['user_id']
-
     cur.execute(
         " SELECT user_id, product_id, SUM(qty), purchase_type FROM cart WHERE user_id = %s GROUP BY product_id, purchase_type ",
         (user_id,))
     cart_details = cur.fetchall()
-    print(cart_details)
+
     for items in cart_details:
-        print(items[1], "   ", items[2], items[3])
+        print('##########')
+        print(items[1])
+        print('##########')
+        cur.execute(" SELECT * FROM products WHERE p_id = %s;", (items[1],))
+        product = cur.fetchone()
+        print(product)
+        if items[3] == 0:
+            price = product[-1] + product[-2]
+        elif items[3] == 1:
+            price = product[-2]
+        else:
+            price = product[-1]
+        total_price = price * items[2]
         try:
-            cur.execute(" INSERT INTO order_details (o_id, p_id, u_id, qty, purchase_type) VALUES (%s, %s, %s, %s, %s)",
-                        (order_id, items[1], user_id, items[2], items[3],))
+            cur.execute(" INSERT INTO order_details (o_id, p_id, u_id, qty, purchase_type, total_amount) VALUES (%s, %s, %s, %s, %s, %s)",
+                        (order_id, items[1], user_id, items[2], items[3], total_price))
             mysql.connection.commit()
             cur.execute(" DELETE FROM cart where user_id = %s", (user_id,))
             mysql.connection.commit()
@@ -289,6 +312,7 @@ def checkout():
     return redirect(url_for('order'))
 
 #Shows the order history of the user
+'''
 @app.route('/order')
 def order():
     loggedIn, name = getLoginDetails()
@@ -301,6 +325,32 @@ def order():
     cur.close()
     return render_template('order.html', order_prods=order_prods, user_data=name,
                             products = products_dict, purchase = purchase_dict)
+'''
+
+@app.route('/order')
+def order():
+    loggedIn, name = getLoginDetails()
+    if not loggedIn:
+        return redirect(url_for('login_user'))
+    user_id = session['user_id']
+    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cur.execute(
+        " SELECT * FROM order_details JOIN products ON order_details.p_id=products.p_id WHERE u_id = %s;",
+        (user_id,))
+    order_prods = cur.fetchall()
+    cur.close()
+    for product in order_prods:
+        if product['purchase_type'] == 0:
+            product['purchase_type'] = "Advertise and Buy"
+            price = product['price_ad'] + product['price_buy']
+        elif product['purchase_type'] == 1:
+            product['purchase_type'] = "Advertise"
+            price = product['price_ad']
+        else:
+            product['purchase_type'] = "Buy"
+            price = product['price_buy']
+        product['total_price'] = price * product['qty']
+    return render_template('order.html', order_prods=order_prods, user_data=name)
 
 #Admin-Login Page
 @app.route('/admin-login', methods=['POST', 'GET'])
@@ -329,28 +379,34 @@ def admin():
 #Opens up the admin panel
 @app.route('/site/maintenance/admin-panel')
 def admin_panel():
-    if session['admin-login'] == True:
-        cur = mysql.connection.cursor()
-        cur.execute(" SELECT * FROM order_details ORDER BY o_id DESC ")
-        order_details = cur.fetchall()
-        cur.close()
-        order_details_dict = {}
-
-        for items in order_details:
-            order_id = items[0]
+    try:
+        if session['admin-login'] == True:
             cur = mysql.connection.cursor()
-            cur.execute(" SELECT f_name, address, email, phone FROM users WHERE id = %s", (items[2],))
-            user_data = cur.fetchone()
-            if order_id in order_details_dict.keys():
-                order_details_dict[order_id]['details'] += [[products_dict[items[1]], items[3], purchase_dict[items[4]]]]
-            else:
-                order_details_dict[order_id] = {'user_details': user_data}
-                order_details_dict[order_id]['details'] = [[products_dict[items[1]], items[3], purchase_dict[items[4]]]]
-                order_details_dict[order_id]['status'] = items[5]
-        print(order_details_dict)
-        return render_template('admin-panel.html', order_details=order_details_dict, keys=order_details_dict.keys())
-    else:
-        return redirect(url_for('admin_panel'))
+            cur.execute(" SELECT * FROM order_details ORDER BY o_id DESC ")
+            order_details = cur.fetchall()
+            cur.close()
+            order_details_dict = {}
+
+            for items in order_details:
+                order_id = items[0]
+                cur = mysql.connection.cursor()
+                cur.execute(" SELECT f_name, l_name, address, email, phone FROM users WHERE id = %s", (items[2],))
+                user_data = cur.fetchone()
+                cur.close()
+
+                if order_id in order_details_dict.keys():
+                    order_details_dict[order_id]['details'] += [[products_dict[items[1]], items[3], purchase_dict[items[5]], items[4] ]]
+                else:
+                    order_details_dict[order_id] = {'user_details': user_data}
+                    order_details_dict[order_id]['details'] = [[products_dict[items[1]], items[3], purchase_dict[items[5]], items[4] ]]
+                    order_details_dict[order_id]['status'] = items[6]
+
+            print(order_details_dict)
+            return render_template('admin-panel.html', order_details=order_details_dict, keys=order_details_dict.keys())
+        else:
+            return redirect(url_for('admin_panel'))
+    except:
+        return render_template('admin-login.html')
 
 
 @app.route('/site/maintenance/delivery/status/update/<int:order_id>', methods=['POST'])

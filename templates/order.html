@@ -130,19 +130,25 @@
     </div>
 </div>
 <!--<div class="loading w3-center w3-xlarge" style="margin: auto;">Loading...</div>-->
+
 <div class="page" id="pagecon" style="max-width:600px;">
-    {% for items in order_prods %}
+    {% for products in order_prods %}
     <div class="container">
-        <img src="/static/images/Planet_Earth.jpg" style="width:90px;">
-        <p>Order ID: {{ items['o_id'] }}</p>
-        <p>Product Name: {{ products[items['p_id']] }}</p>
-        <p>Quantity: {{ items['qty'] }}</p>
-        <p>Purchase Type: {{ purchase[items['purchase_type']] }}</p>
-        <p>Delivery and Payment Status: {{ items['deliveryandpayment'] }}</p>
+        <img src="/static/img/prod/{{ products['image'] }}" alt="{{ products['p_name'] }}" style="width:90px;">
+        <p>Order ID: {{ products['o_id'] }}</p>
+        <p>Product Name: {{ products['p_name'] }}</p>
+        <pre><p>Description:  {{ products['description'] }}</p></pre>
+        <p>Purchase Type: {{ products['purchase_type'] }}</p>
+        <p>Quantity:      {{ products['qty'] }} </p>
+        <p>Total Price:   Rs. {{ products['total_price'] }} </p>
+        <p>Delivery and Payment Status: {{ products['deliveryandpayment'] }}</p>
     </div>
     <hr>
     {% endfor %}
 </div>
+
+
+
 <footer>
     &copy; Green Strips. All Rights Reserved.</p>
 </footer>
