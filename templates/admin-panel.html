@@ -62,9 +62,23 @@
                 margin: 5px;
             }
 
+            button{
+                float: right;
+                height: 30px;
+                border-radius: 25px;
+                font-weight: 700;
+            }
+
+            button:hover{
+                cursor: pointer;
+            }
+
         </style>
     </head>
     <body>
+        <form action="/admin_logout", method="POST">
+            <button>LOG OUT</button>
+        </form>
         <h1>ADMIN PANEL</h1>
         <div id='container'>
             {% for key in keys %}

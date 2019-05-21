@@ -408,7 +408,7 @@ def admin_panel():
     except:
         return render_template('admin-login.html')
 
-
+#Changes the status of a particular order to delivered
 @app.route('/site/maintenance/delivery/status/update/<int:order_id>', methods=['POST'])
 def delivery_status_update(order_id):
     try:
@@ -425,6 +425,12 @@ def delivery_status_update(order_id):
     cur.close()
     return redirect(url_for('admin_panel'))
 
+#log outs the admin
+@app.route('/admin_logout', methods=['POST'])
+def admin_logout():
+    session.clear()
+    msg = "User Logged Out!"
+    return redirect(url_for('admin'))
 
 if __name__ == '__main__':
     app.run(debug=True)

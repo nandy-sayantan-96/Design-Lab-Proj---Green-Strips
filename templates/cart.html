@@ -96,7 +96,6 @@
         {% for products in cart_prods %}
         <div class="container">
             <img src="/static/img/prod/{{ products['image'] }}" alt="{{ products['p_name'] }}" style="width:90px;">
-            <p>Order ID: {{ products['o_id'] }}</p>
             <p>Product Name: {{ products['p_name'] }}</p>
             <pre><p>Description:  {{ products['description'] }}</p></pre>
             <p>Purchase Type: {{ products['purchase_type'] }}</p>
