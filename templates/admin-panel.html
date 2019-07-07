@@ -24,7 +24,7 @@
                 width: 40%;
                 padding: 10px;
                 box-sizing: border-box;
-                height: 265px;
+                height: 285px;
                 float: left;
                 display: inline-block;
             }
@@ -34,7 +34,7 @@
                 width: 40%;
                 padding: 10px;
                 box-sizing: border-box;
-                height: 265px;
+                height: 285px;
                 float: left;
                 display: inline-block;
             }
@@ -44,7 +44,7 @@
                 width: 20%;
                 padding: 10px;
                 box-sizing: border-box;
-                height: 265px;
+                height: 285px;
                 float: left;
                 display: inline-block;
             }
@@ -74,12 +74,51 @@
             }
 
         </style>
+        <title>Green Strips</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="/static/style/style.css">
+        <link rel="stylesheet" href="/static/style/styleadvertise1.css">
+
     </head>
     <body>
-        <form action="/admin_logout", method="POST">
-            <button>LOG OUT</button>
-        </form>
-        <h1>ADMIN PANEL</h1>
+        <!--snackbar to show confirmations or error messages-->
+        <div id="snackbar">Some message..</div>
+        <div>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            {% for message in messages %}
+            <div class="flash show">
+                {{ message }}
+                <button class="closebtn" onclick="this.parentElement.style.display='none';">&times;</button>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </div>
+
+        <!-- Navbar (sit on top) -->
+        <div class="w3-top">
+            <div class="w3-bar w3-black" id="myNavbar">
+                <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right" href="javascript:void(0);"
+                onclick="toggleFunction()" title="Toggle Navigation Menu">
+                    <i class="fa fa-bars"></i>
+                </a>
+
+                <form action="/admin_logout", method="POST">
+                            <button class="w3-bar-item w3-button w3-right">LOG OUT</button>
+                        </form>
+            </div>
+
+        </div>
+        <!-- First Parallax Image with Logo Text-->
+        <div class="bgimg-other w3-display-container w3-opacity-min">
+            <div class="w3-display-middle w3-center" style="border:0.4em double white;padding:0.5%">
+                <span class="w3-xxlarge w3-text-white w3-wide">Admin Panel</span>
+            </div>
+        </div>
         <div id='container'>
             {% for key in keys %}
             <div id="orders-admin">
@@ -119,7 +158,6 @@
             </div>
             {% endfor %}
         </div>
-
 
     </body>
 </html>

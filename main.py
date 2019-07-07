@@ -81,6 +81,8 @@ def register_advertiser():
         address = request.form['address']
         organization = request.form['org_name']
         phone = request.form['phone']
+        print('###################')
+        print(password, phone, address)
         try:
             cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
             cur.execute(
@@ -142,6 +144,32 @@ def logout_user():
     session.clear()
     msg = "User Logged Out!"
     return jsonify({'status': True, 'message': msg})
+
+@app.route('/editUser', methods=['POST'])
+def update_user_details():
+    if request.method == 'POST':
+        # Parse form data
+        #password = request.form['password']
+        #password = hashlib.md5(password.encode()).hexdigest()
+        email = request.form['email']
+        firstName = request.form['f_name']
+        lastName = request.form['l_name']
+        address = request.form['address']
+        organization = request.form['org_name']
+        phone = request.form['phone']
+        try:
+            user_id = session['user_id']
+            cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+            cur.execute(
+                "UPDATE users SET f_name=%s, l_name=%s, organization=%s, address=%s, email=%s, phone=%s where id=%s",
+                (firstName, lastName, organization, address, email, phone, user_id))
+            mysql.connection.commit()
+            #flash('Your details were updated')
+        except Exception as exc:
+            mysql.connection.rollback()
+            msg = "Error occured"
+            flash(str(exc))
+    return redirect(url_for('user_details'))
 
 '''
 #Lists all available products
